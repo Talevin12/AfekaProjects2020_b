@@ -1,9 +1,9 @@
 package id314920505_id316013804;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
+// testing
 public class Ballot {
 	protected int id;
 	protected Address address;
