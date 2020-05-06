@@ -16,14 +16,14 @@ public class Citizen {
 		this.ballot = ballot;
 		this.isQuarintined = isQuarintined;
 	}
+//	public boolean setId(String id){
+//		
+//	}
 	public Citizen(String name, String id, int birthYear, boolean isQuarintined) {
-		this.name = name; 
-		this.id = id;
-		this.birthYear = birthYear;
-		this.isQuarintined = isQuarintined;
+		this(name, id, birthYear, null, isQuarintined);
 	}
 
-	public Citizen() {
+	public Citizen() throws IdException{
 		this("Jesus Christ", "1", 0, null, false);
 	}
 
@@ -46,25 +46,9 @@ public class Citizen {
 
 	public int vote(Scanner scn, String parties, int numOfParties) {
 		boolean b = false;
-		int choice = 0;;
+		int choice = 0;
 		System.out.println("\nHello, "+ this.name);
 
-		if(this.isQuarintined) {
-			while(!b) {
-				System.out.println("Are you protected? y/n");
-				choice = scn.next().charAt(0);
-				if(choice == 'y' || choice == 'Y') 
-					b = true;
-
-				else if(choice == 'n' || choice == 'N') 
-					return 0;
-
-				else 
-					System.out.println("Wrong input! try again.");
-			}
-		}
-
-		b = false;
 		while(!b) {
 			System.out.println("Choose party to vote for:");
 			System.out.println("0 - Do not want to vote");

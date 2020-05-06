@@ -9,7 +9,7 @@ import id314920505_id316013804.Party.eFaction;
 public class ProgramHandle {
 	static int choice = 0;
 
-	public static boolean performAction(Elections election, Scanner scan) {
+	public static boolean performAction(Elections election, Scanner scan) throws AgeException, IdException {
 		switch(choice) {
 
 		case 1: 
@@ -88,15 +88,37 @@ public class ProgramHandle {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
 		}
+		boolean b = false;
+		String id = "";
 
 		System.out.println("Please enter the citizen name (first name and last name): ");
 		String name=scan.next()+" "+scan.next();
-		System.out.println("Please enter the citizen id: ");
-		String id = scan.next();
+		
+		while(!b) {
+			System.out.println("Please enter the citizen id: ");
+			id = scan.next();
+
+			if(checkId(id))
+				b = true;
+		}
+		int yearBirth = LocalDate.now().getYear();
 		System.out.println("Please enter the citizen year of birth: ");
-		int yearBirth = scan.nextInt();
+		yearBirth = scan.nextInt();
+		try {
+			// if(yearBirth > election.year) 
+			// System.out.println("Dude, you were wont (??) born in the future");
+
+			if((LocalDate.now().getYear() - yearBirth) < 18) {
+				throw new AgeException("This age is not eligble to vote");
+			}
+		}
+		catch (AgeException e) {
+			System.out.println(e.getMsg());
+			return false;
+		}
+		
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-		boolean isQuarintined=scan.nextBoolean();
+		boolean isQuarintined = scan.nextBoolean();
 
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
@@ -110,6 +132,7 @@ public class ProgramHandle {
 		Party party = parties.get(choice-1);
 
 		Politician candidate = new Politician(party,name,id,yearBirth,ballot,isQuarintined);
+
 
 		return election.addCandidateToParty(party, candidate);
 	}
@@ -127,7 +150,7 @@ public class ProgramHandle {
 
 		System.out.println("Please enter the party name: ");
 		String name=scan.next();
-		
+
 		while(!b) {
 			System.out.println("Please enter the faction of the party: ");
 			System.out.println("1 - "+ eFaction.Left.toString() +"\n"
@@ -152,9 +175,9 @@ public class ProgramHandle {
 				System.out.println("Wrong input! try again");
 			}
 		}
-		
+
 		b = false;
-		
+
 		while(!b) {
 			System.out.println("Please enter the establish Date of the party: ");
 			System.out.println("year: ");
@@ -178,7 +201,7 @@ public class ProgramHandle {
 		return true;
 	}
 
-	public static boolean addCitizen(Elections election, Scanner scan) {
+	public static boolean addCitizen(Elections election, Scanner scan) throws IdException, AgeException {
 		if(election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
@@ -191,38 +214,27 @@ public class ProgramHandle {
 
 		String id = "";
 
+
 		while(!b) {
 			System.out.println("Please enter the citizen id: ");
 			id = scan.next();
-			if (id.length() == 9) {
-				for (char c : id.toCharArray()) {
-					if (!Character.isDigit(c)) {
-						System.out.println("Wrong input! try again (id must be only digits)");
-						b = true;
-						break;
-					}
-				}
-
-				if(b)
-					b = false;
-				else
-					b = true;
-			}
-			else {
-				System.out.println("Wrong input! try again (id length must be 9");
-			}
+			if(checkId(id))
+				b = true;
 		}
 
-		b = false;
 		int yearBirth = LocalDate.now().getYear();
-		while(!b) {
-			System.out.println("Please enter the citizen year of birth: ");
-			yearBirth = scan.nextInt();
+		System.out.println("Please enter the citizen year of birth: ");
+		yearBirth = scan.nextInt();
+		try {
+			// if(yearBirth > election.year) 
+			// System.out.println("Dude, you were wont (??) born in the future");
 
-			if(yearBirth <= election.year)
-				b = true;
-			else
-				System.out.println("Wrong input! try again");
+			if((LocalDate.now().getYear() - yearBirth) < 18)
+				throw new AgeException("This age is not eligble to vote");
+		}
+		catch (AgeException e) {
+			System.out.println(e.getMsg());
+			return false;
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
@@ -233,8 +245,28 @@ public class ProgramHandle {
 		int idChoice = scan.nextInt();
 		Ballot ballot = election.findBallotById(idChoice);
 
-		Citizen citizen = new Citizen(name,id,yearBirth,ballot,isQuarintined); 
+		Citizen citizen = new Citizen(name,id,yearBirth,ballot,isQuarintined);
 		return election.addCitizen(citizen);
+	}
+
+	private static boolean checkId(String id) {
+		try {
+			if (id.length() == 9) {
+				for (char c : id.toCharArray()) {
+					if (!Character.isDigit(c)) {
+						throw new IdException("EXCEPTION: id must be digits only");
+					}
+				}
+			}
+			else {
+				throw new IdException("EXCEPTION: Id length must be 9 digits");
+			}
+			return true;
+		}
+		catch (IdException e) {
+			System.out.println(e.getMsg());
+			return false;
+		}
 	}
 
 	public static boolean addBallot(Elections election, Scanner scan) {
@@ -278,7 +310,7 @@ public class ProgramHandle {
 		return location;
 	}
 
-	public static void showMenu(Elections election, Scanner scan) {
+	public static void showMenu(Elections election, Scanner scan) throws AgeException, IdException {
 		System.out.println("\nMENU: please enter the number of the desired action:");
 		System.out.println("1: Add a Ballot");
 		System.out.println("2: Add a Citizen");
@@ -303,7 +335,7 @@ public class ProgramHandle {
 		}
 	}
 
-	public static void startMain() {
+	public static void startMain() throws AgeException, IdException {
 		Scanner scan = new Scanner(System.in);
 		int year = 0;
 		int month = 0;
@@ -334,23 +366,35 @@ public class ProgramHandle {
 		CoronaBallot cb = new CoronaBallot(a2);
 		ArmyBallot ab = new ArmyBallot(a3);
 
-		Citizen c = new Citizen("Avner Levi", "23425345", 2000, ab, false);
-		Citizen c1 = new Citizen("Tal Benita", "123456789", 1996, cb, true);
-		Citizen c2 = new Citizen("Shalom Koriyat","987654321" , 2000, ab,false);
-		Citizen c3 = new Citizen("Efrat Apacy" ,"676767676", 1976,b2,false);
-		Citizen c4 = new Citizen("Gabi Guetta","111111111", 1950,cb,true);
-		Citizen c5 = new Citizen("Dor Adam", "919191919", 1987, b1,false);
+		Citizen c = null;
+		Citizen c1 = null;
+		Citizen c2 = null;
+		Citizen c3 = null;
+		Citizen c4 = null;
+		Citizen c5 = null;
+		c = new Citizen("Avner Levi", "234253545", 2000, ab, false);
+		c1 = new Citizen("Tal Benita", "123456789", 1996, cb, true);
+		c2 = new Citizen("Shalom Koriyat","987654321" , 2000, ab,false);
+		c3 = new Citizen("Efrat Apacy" ,"676767676", 1976,b2,false);
+		c4 = new Citizen("Gabi Guetta","111111111", 1950,cb,true);
+		c5 = new Citizen("Dor Adam", "919191919", 1987, b1,false);
 
 		Party p= new Party("Likud", eFaction.Right, LocalDate.of(1960,4,24));
 		Party p1= new Party("Kahol Lavan", eFaction.Center, LocalDate.of(2019,7,6));
 		Party p2= new Party("Merech", eFaction.Left, LocalDate.of(1987,9,12));
 
-		Politician poli= new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1, false);
-		Politician poli1= new Politician(p1, "Benny Gantz","638162298", 1967, b2,false);
-		Politician poli2= new Politician(p2, "Nitzan Horowitz" ,"711426037", 1977,b2,false);
-		Politician poli3= new Politician(p, "Miri Regev" ,"821394203", 1974,b1,false);
-		Politician poli4= new Politician(p1, "Yair Lapid" ,"485936112", 1968,b2,false);
-		Politician poli5= new Politician(p2, "Tamar Zandberg" ,"639048392", 1986,b2,false);
+		Politician poli = null;
+		Politician poli1 = null;
+		Politician poli2 = null;
+		Politician poli3 = null;
+		Politician poli4 = null;
+		Politician poli5 = null;
+		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1, false);
+		poli1 = new Politician(p1, "Benny Gantz","638162298", 1967, b2,false);
+		poli2 = new Politician(p2, "Nitzan Horowitz" ,"711426037", 1977,b2,false);
+		poli3 = new Politician(p, "Miri Regev" ,"821394203", 1974,b1,false);
+		poli4 = new Politician(p1, "Yair Lapid" ,"485936112", 1968,b2,false);
+		poli5 = new Politician(p2, "Tamar Zandberg" ,"639048392", 1986,b2,false);
 
 		election.addBallot(b1);
 		election.addBallot(b2);

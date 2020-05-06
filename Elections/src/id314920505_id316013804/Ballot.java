@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 // testing
-public class Ballot {
+public class Ballot/*<T extends Citizen>*/ {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
-	protected ArrayList<Citizen> voters;
+	protected ArrayList<Citizen>/*<T>*/ voters;
 //	protected int numOfVoters = 0;
 	protected ArrayList<Integer> ballotResults;
 	
@@ -23,12 +23,13 @@ public class Ballot {
 		this(new Address());
 	}
 	
-	public boolean addVoter(Citizen voter, int electionYear) {
+	public boolean addVoter(/*T*/Citizen voter, int electionYear) {
 		if(voter.isQuarintined)
 			return false;
 		if(isSoldier(voter, electionYear))
 			return false;
 		this.voters.add(voter);
+
 		return true;
 	}
 	
