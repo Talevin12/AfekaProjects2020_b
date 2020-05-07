@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 // testing
-public class Ballot<T extends Citizen> {
+public class Ballot<T extends Votable> {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
