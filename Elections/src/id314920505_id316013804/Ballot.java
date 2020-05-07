@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 // testing
-public class Ballot/*<T extends Citizen>*/ {
+public class Ballot<T extends Citizen> {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
@@ -52,7 +52,7 @@ public class Ballot/*<T extends Citizen>*/ {
 		return true;	
 	}
 	
-	public boolean equals(Ballot ballot) {
+	public boolean equals(Ballot<T> ballot) {
 		if ((this.id==ballot.id)&&(this.address.equals(ballot.address))) {
 			return true;
 		}

@@ -138,7 +138,7 @@ public class Elections {
 //		this.results = new ArrayList<Integer>(this.parties.size()+1);
 		for(int i = 0; i < this.ballotIdCounter-1; i++) {
 			for(int j = 0; j < this.parties.size()+1; j++) {
-				this.results.set(j, this.results.get(j) + this.ballots.get(i).ballotResults.get(j));
+				this.results.set(j,  this.results.get(j) + (int)this.ballots.get(i).ballotResults.get(j));
 			}
 		}
 	}

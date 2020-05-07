@@ -2,14 +2,14 @@ package id314920505_id316013804;
 
 import java.util.Scanner;
 
-public class Citizen {
+public class Citizen implements Votable{
 	protected String name;
 	protected String id;
 	protected int birthYear;
-	protected Ballot ballot;
+	protected Ballot<Citizen> ballot;
 	protected boolean isQuarintined;
 
-	public Citizen(String name, String id, int birthYear, Ballot ballot, boolean isQuarintined) {
+	public Citizen(String name, String id, int birthYear, Ballot<Citizen> ballot, boolean isQuarintined) {
 		this.name = name; 
 		this.id = id;
 		this.birthYear = birthYear;
@@ -27,11 +27,11 @@ public class Citizen {
 		this("Jesus Christ", "1", 0, null, false);
 	}
 
-	public Ballot getBallot() {
+	public Ballot<Citizen> getBallot() {
 		return this.ballot;
 	}
 
-	public boolean setBallot(Ballot ballot) {
+	public boolean setBallot(Ballot<Citizen> ballot) {
 		this.ballot = ballot;
 		return true;
 	}
@@ -44,6 +44,7 @@ public class Citizen {
 		return str.toString();
 	}
 
+	@Override
 	public int vote(Scanner scn, String parties, int numOfParties) {
 		boolean b = false;
 		int choice = 0;

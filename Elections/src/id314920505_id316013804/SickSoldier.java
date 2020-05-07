@@ -1,16 +1,13 @@
 package id314920505_id316013804;
 
-import java.time.LocalDate;
 import java.util.Scanner;
 
-public class SickCitizen extends Citizen implements Votable, Sickable {
-	protected LocalDate sickDate;
-	
-	public SickCitizen(String name, String id, int birthYear, Ballot ballot, LocalDate sickDate) {
-		super(name, id, birthYear, ballot, false);
-		this.sickDate = sickDate;
-	}
+public class SickSoldier extends Soldier implements Votable, Sickable {
 
+	public SickSoldier(String name, String id, int birthYear, Ballot<SickSoldier> ballot, boolean isQuarintined) {
+		super(name, id, birthYear, ballot, isQuarintined);
+	}
+	
 	@Override
 	public int vote(Scanner scan, String parties, int numOfParties) {
 		int choice = 0;
@@ -31,4 +28,5 @@ public class SickCitizen extends Citizen implements Votable, Sickable {
 		
 		return super.vote(scan, parties, numOfParties);
 	}
+
 }
