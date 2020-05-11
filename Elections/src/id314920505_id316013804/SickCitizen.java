@@ -3,12 +3,13 @@ package id314920505_id316013804;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class SickCitizen extends Citizen implements Votable, Sickable {
+public class SickCitizen extends Citizen implements Sickable {
 	protected LocalDate sickDate;
 	
-	public SickCitizen(String name, String id, int birthYear, Ballot ballot, LocalDate sickDate) {
-		super(name, id, birthYear, ballot, false);
-		this.sickDate = sickDate;
+	public SickCitizen(String name, String id, int birthYear, 
+			Ballot<SickCitizen> ballot, LocalDate sickDate) {
+		super(name, id, birthYear, ballot);
+		this.sickDate = sickDate;	
 	}
 
 	@Override

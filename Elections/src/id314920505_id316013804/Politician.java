@@ -6,8 +6,9 @@ public class Politician extends Citizen {
 	private Party party;
 	private int primeriesVotes = 0;
 	
-	public Politician(Party party, String name, String id, int birthYear, Ballot<Citizen> ballot, boolean isQuarintined) {
-		super(name, id, birthYear, ballot, isQuarintined);
+	public Politician(Party party, String name, String id, int birthYear, 
+			Ballot<Politician> ballot) {
+		super(name, id, birthYear, ballot);
 		setParty(party);
 	}
 

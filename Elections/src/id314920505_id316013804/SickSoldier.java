@@ -2,10 +2,10 @@ package id314920505_id316013804;
 
 import java.util.Scanner;
 
-public class SickSoldier extends Soldier implements Votable, Sickable {
+public class SickSoldier extends Soldier implements Sickable {
 
-	public SickSoldier(String name, String id, int birthYear, Ballot<SickSoldier> ballot, boolean isQuarintined) {
-		super(name, id, birthYear, ballot, isQuarintined);
+	public SickSoldier(String name, String id, int birthYear, Ballot<SickSoldier> ballot) {
+		super(name, id, birthYear, ballot);
 	}
 	
 	@Override

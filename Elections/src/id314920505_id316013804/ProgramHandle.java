@@ -123,7 +123,7 @@ public class ProgramHandle {
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
 		int idChoice = scan.nextInt();
-		Ballot ballot = election.findBallotById(idChoice);
+		Ballot<Votable<Citizen>> ballot = election.findBallotById(idChoice);
 
 		System.out.println("Please choose a party: ");
 		System.out.println(election.showAllParties());
@@ -131,7 +131,7 @@ public class ProgramHandle {
 		ArrayList<Party> parties = election.getParties();
 		Party party = parties.get(choice-1);
 
-		Politician candidate = new Politician(party,name,id,yearBirth,ballot,isQuarintined);
+		Politician candidate = new Politician(party,name,id,yearBirth,ballot);
 
 
 		return election.addCandidateToParty(party, candidate);
@@ -238,14 +238,14 @@ public class ProgramHandle {
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-		boolean isQuarintined=scan.nextBoolean();
+//		boolean isQuarintined=scan.nextBoolean();
 
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
 		int idChoice = scan.nextInt();
-		Ballot ballot = election.findBallotById(idChoice);
+		Ballot<Votable<Citizen>> ballot = election.findBallotById(idChoice);
 
-		Citizen citizen = new Citizen(name,id,yearBirth,ballot,isQuarintined);
+		Citizen citizen = new Citizen(name,id,yearBirth,ballot);
 		return election.addCitizen(citizen);
 	}
 
@@ -280,6 +280,7 @@ public class ProgramHandle {
 		System.out.println("1: Regular ballot");  
 		System.out.println("2: Corona ballot");
 		System.out.println("3: Army ballot");
+		System.out.println("4: Corona Army ballot");
 
 		choice = scan.nextInt();
 
@@ -287,15 +288,20 @@ public class ProgramHandle {
 		case 0:
 			return false;
 		case 1:
-			election.addBallot(new Ballot(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan)));
 			addBallot(election, scan);
 			break;
 		case 2:
-			election.addBallot(new CoronaBallot(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<SickCitizen>(getLocationFromUser(scan)));
 			addBallot(election, scan);
 			break;
 		case 3:
-			election.addBallot(new ArmyBallot(getLocationFromUser(scan)));
+//			Ballot<Votable> temp = new Ballot<Soldier>();
+			election.addBallot(new Ballot<Soldier>(getLocationFromUser(scan)));
+			addBallot(election, scan);
+			break;
+		case 4:
+			election.addBallot(new Ballot<SickSoldier>(getLocationFromUser(scan)));
 			addBallot(election, scan);
 			break;
 		default:
@@ -361,10 +367,10 @@ public class ProgramHandle {
 		Address a2 = new Address("Yafo", "Hagana",44);
 		Address a3 = new Address("Ashdod", "The City",90);
 
-		Ballot b1 = new Ballot(a1);
-		Ballot b2 = new Ballot(a);
-		CoronaBallot cb = new CoronaBallot(a2);
-		ArmyBallot ab = new ArmyBallot(a3);
+		Ballot<Votable<Citizen>> b1 = new Ballot<>(a1);
+		Ballot<Votable<Citizen>> b2 = new Ballot<>(a);
+		Ballot<Votable<SickCitizen>> cb = new Ballot<>(a2);
+		Ballot<Votable<Soldier>> ab = new Ballot<>(a3);
 
 		Citizen c = null;
 		Citizen c1 = null;
@@ -372,12 +378,12 @@ public class ProgramHandle {
 		Citizen c3 = null;
 		Citizen c4 = null;
 		Citizen c5 = null;
-		c = new Citizen("Avner Levi", "234253545", 2000, ab, false);
-		c1 = new Citizen("Tal Benita", "123456789", 1996, cb, true);
-		c2 = new Citizen("Shalom Koriyat","987654321" , 2000, ab,false);
-		c3 = new Citizen("Efrat Apacy" ,"676767676", 1976,b2,false);
-		c4 = new Citizen("Gabi Guetta","111111111", 1950,cb,true);
-		c5 = new Citizen("Dor Adam", "919191919", 1987, b1,false);
+		c = new Soldier("Avner Levi", "234253545", 2000, ab);
+		c1 = new Citizen("Tal Benita", "123456789", 1996, cb);
+		c2 = new Citizen("Shalom Koriyat","987654321" , 2000, ab);
+		c3 = new Citizen("Efrat Apacy" ,"676767676", 1976,b2);
+		c4 = new Citizen("Gabi Guetta","111111111", 1950,cb);
+		c5 = new Citizen("Dor Adam", "919191919", 1987, b1);
 
 		Party p= new Party("Likud", eFaction.Right, LocalDate.of(1960,4,24));
 		Party p1= new Party("Kahol Lavan", eFaction.Center, LocalDate.of(2019,7,6));
@@ -389,12 +395,12 @@ public class ProgramHandle {
 		Politician poli3 = null;
 		Politician poli4 = null;
 		Politician poli5 = null;
-		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1, false);
-		poli1 = new Politician(p1, "Benny Gantz","638162298", 1967, b2,false);
-		poli2 = new Politician(p2, "Nitzan Horowitz" ,"711426037", 1977,b2,false);
-		poli3 = new Politician(p, "Miri Regev" ,"821394203", 1974,b1,false);
-		poli4 = new Politician(p1, "Yair Lapid" ,"485936112", 1968,b2,false);
-		poli5 = new Politician(p2, "Tamar Zandberg" ,"639048392", 1986,b2,false);
+		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1);
+		poli1 = new Politician(p1, "Benny Gantz","638162298", 1967, b2);
+		poli2 = new Politician(p2, "Nitzan Horowitz" ,"711426037", 1977,b2);
+		poli3 = new Politician(p, "Miri Regev" ,"821394203", 1974,b1);
+		poli4 = new Politician(p1, "Yair Lapid" ,"485936112", 1968,b2);
+		poli5 = new Politician(p2, "Tamar Zandberg" ,"639048392", 1986,b2);
 
 		election.addBallot(b1);
 		election.addBallot(b2);

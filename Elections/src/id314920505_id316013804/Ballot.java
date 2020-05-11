@@ -8,13 +8,15 @@ public class Ballot<T extends Votable> {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
-	protected ArrayList<Citizen>/*<T>*/ voters;
+	protected ArrayList<T> voters;
 //	protected int numOfVoters = 0;
 	protected ArrayList<Integer> ballotResults;
 	
 	public Ballot(Address address) {
 		this.address = address;
+		
 		this.voters = new ArrayList<>();
+		
 		this.ballotResults = new ArrayList<>(0);
 		this.ballotResults.add(0);
 	}
@@ -23,11 +25,11 @@ public class Ballot<T extends Votable> {
 		this(new Address());
 	}
 	
-	public boolean addVoter(/*T*/Citizen voter, int electionYear) {
-		if(voter.isQuarintined)
-			return false;
-		if(isSoldier(voter, electionYear))
-			return false;
+	public boolean addVoter(T voter, int electionYear) {
+//		if(voter.isQuarintined)
+//			return false;
+//		if(isSoldier(voter, electionYear))
+//			return false;
 		this.voters.add(voter);
 
 		return true;

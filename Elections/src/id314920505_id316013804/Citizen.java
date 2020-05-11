@@ -2,32 +2,31 @@ package id314920505_id316013804;
 
 import java.util.Scanner;
 
-public class Citizen implements Votable{
+public class Citizen implements Votable	{
 	protected String name;
 	protected String id;
 	protected int birthYear;
-	protected Ballot<Citizen> ballot;
-	protected boolean isQuarintined;
+	protected Ballot<? extends Citizen> ballot;
+//	protected boolean isQuarintined;
 
-	public Citizen(String name, String id, int birthYear, Ballot<Citizen> ballot, boolean isQuarintined) {
+	public Citizen(String name, String id, int birthYear, Ballot<? extends Citizen> ballot) {
 		this.name = name; 
 		this.id = id;
 		this.birthYear = birthYear;
 		this.ballot = ballot;
-		this.isQuarintined = isQuarintined;
 	}
 //	public boolean setId(String id){
 //		
 //	}
-	public Citizen(String name, String id, int birthYear, boolean isQuarintined) {
-		this(name, id, birthYear, null, isQuarintined);
+	public Citizen(String name, String id, int birthYear) {
+		this(name, id, birthYear, null);
 	}
 
-	public Citizen() throws IdException{
-		this("Jesus Christ", "1", 0, null, false);
+	public Citizen() throws IdException {
+		this("Jesus Christ", "1", 0, null);
 	}
 
-	public Ballot<Citizen> getBallot() {
+	public Ballot<? extends Citizen> getBallot() {
 		return this.ballot;
 	}
 
@@ -39,7 +38,7 @@ public class Citizen implements Votable{
 	@Override
 	public String toString() {
 		StringBuffer str = new StringBuffer();
-		str.append("Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Is Quarentined: "+ this.isQuarintined);
+		str.append("Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Is Quarentined: ");
 
 		return str.toString();
 	}
