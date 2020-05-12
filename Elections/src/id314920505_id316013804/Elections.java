@@ -6,7 +6,7 @@ public class Elections {
 	protected int month;
 	protected int year;
 //	protected Ballot[] ballots;
-	protected ArrayList<Ballot<Citizen>> ballots;
+	protected ArrayList<Ballot<? extends Citizen>> ballots;
 //	protected Party[] parties;
 	protected ArrayList<Party> parties;
 	protected int ballotIdCounter = 1;
@@ -23,7 +23,7 @@ public class Elections {
 		this.results = new ArrayList<>(0);
 		this.results.add(0);
 	}
-	public Ballot<Citizen> findBallotById(int id) {
+	public Ballot<? extends Citizen> findBallotById(int id) {
 //		for(int i = 0; i < this.ballotIdCounter; i++) {
 //			if(id == this.ballots[i].getId()) {
 //				return this.ballots[i];
@@ -38,7 +38,7 @@ public class Elections {
 	}
 
 
-	public void addBallot(Ballot<Citizen> ballot) {
+	public void addBallot(Ballot<? extends Citizen> ballot) {
 		ballot.setId(this.ballotIdCounter);
 		this.ballots.add(ballot);
 		this.ballotIdCounter++;

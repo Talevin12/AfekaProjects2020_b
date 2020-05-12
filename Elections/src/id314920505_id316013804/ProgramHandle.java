@@ -117,12 +117,12 @@ public class ProgramHandle {
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-		boolean isQuarintined = scan.nextBoolean();
+		//boolean isQuarintined = scan.nextBoolean();
 
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
 		int idChoice = scan.nextInt();
-		Ballot<Citizen> ballot = election.findBallotById(idChoice);
+		Ballot<? extends Citizen> ballot = election.findBallotById(idChoice);
 
 		System.out.println("Please choose a party: ");
 		System.out.println(election.showAllParties());
@@ -232,12 +232,12 @@ public class ProgramHandle {
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-//		boolean isQuarintined=scan.nextBoolean();
+		boolean isQuarintined=scan.nextBoolean();
 
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
 		int idChoice = scan.nextInt();
-		Ballot<Votable<Citizen>> ballot = election.findBallotById(idChoice);
+		Ballot<? extends Citizen> ballot = election.findBallotById(idChoice);
 
 		Citizen citizen = new Citizen(name, id, yearBirth, ballot);
 		return election.addCitizen(citizen);
@@ -280,7 +280,7 @@ public class ProgramHandle {
 		case 0:
 			return false;
 		case 1:
-			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan))));
+			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan)));
 			addBallot(election, scan);
 			break;
 		case 2:
@@ -358,10 +358,10 @@ public class ProgramHandle {
 		Address a2 = new Address("Yafo", "Hagana", 44);
 		Address a3 = new Address("Ashdod", "The City", 90);
 
-		Ballot<Votable<Citizen>> b1 = new Ballot<>(a1);
-		Ballot<Votable<Citizen>> b2 = new Ballot<>(a);
-		Ballot<Votable<SickCitizen>> cb = new Ballot<>(a2);
-		Ballot<Votable<Soldier>> ab = new Ballot<>(a3);
+		Ballot<Citizen> b1 = new Ballot<>(a1);
+		Ballot<Citizen> b2 = new Ballot<>(a);
+		Ballot<SickCitizen> cb = new Ballot<>(a2);
+		Ballot<Soldier> ab = new Ballot<>(a3);
 
 		Citizen c = null;
 		Citizen c1 = null;

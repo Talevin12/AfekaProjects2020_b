@@ -7,7 +7,7 @@ public class Politician extends Citizen {
 	private int primeriesVotes = 0;
 	
 	public Politician(Party party, String name, String id, int birthYear, 
-			Ballot<Politician> ballot) {
+			Ballot<? extends Citizen> ballot) {
 		super(name, id, birthYear, ballot);
 		setParty(party);
 	}
