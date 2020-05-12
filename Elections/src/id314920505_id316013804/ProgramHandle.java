@@ -9,30 +9,30 @@ import id314920505_id316013804.Party.eFaction;
 public class ProgramHandle {
 	static int choice = 0;
 
-	public static boolean performAction(Elections election, Scanner scan) throws AgeException, IdException {
-		switch(choice) {
+	public static boolean performAction(Elections election, Scanner scan) throws InvalidInputException {
+		switch (choice) {
 
-		case 1: 
-			return addBallot(election, scan); 
+		case 1:
+			return addBallot(election, scan);
 		case 2:
-			return addCitizen(election, scan); 
-		case 3: 
-			return addParty(election, scan); 
+			return addCitizen(election, scan);
+		case 3:
+			return addParty(election, scan);
 		case 4:
-			return addCandidateToParty(election,scan); 
+			return addCandidateToParty(election, scan);
 		case 5:
-			showAllBallots(election,scan);
+			showAllBallots(election, scan);
 			break;
 		case 6:
-			showAllVoters(election, scan); 
+			showAllVoters(election, scan);
 			break;
 		case 7:
-			showAllParties(election,scan); 
+			showAllParties(election, scan);
 			break;
 		case 8:
-			return startElections(election,scan);
+			return startElections(election, scan);
 		case 9:
-			showElectionsResults(election,scan);
+			showElectionsResults(election, scan);
 			break;
 		case 10:
 			System.out.println("Have a good day!");
@@ -46,30 +46,30 @@ public class ProgramHandle {
 
 	}
 
-	public static void showElectionsResults(Elections election,Scanner scan) {
-		if(!election.hasStarted) 
+	public static void showElectionsResults(Elections election, Scanner scan) {
+		if (!election.hasStarted)
 			System.out.println("Elections hasn't started yet \n");
-		else 
+		else
 			System.out.println(election.showElectionsResults());
-		//		showMenu(election, scan);
+		// showMenu(election, scan);
 
 	}
 
 	public static boolean startElections(Elections election, Scanner scan) {
-		if(election.hasStarted) {
+		if (election.hasStarted) {
 			System.out.println("Elctions already started \n");
 			return false;
 		}
 		election.startElections();
 
-		//		showMenu(election, scan);
+		// showMenu(election, scan);
 		return true;
 	}
 
-	public static void showAllParties(Elections election,Scanner scan) {
+	public static void showAllParties(Elections election, Scanner scan) {
 		System.out.println(election.showAllParties());
 
-		if(election.hasStarted)
+		if (election.hasStarted)
 			System.out.println("***The parties's list of candidates are listed by primeries");
 		else
 			System.out.println("**Elections hadn't started yet. The parties's list of candidates are listed randomly");
@@ -79,12 +79,12 @@ public class ProgramHandle {
 		System.out.println(election.showAllVoters());
 	}
 
-	public static void showAllBallots(Elections election,Scanner scan) {
+	public static void showAllBallots(Elections election, Scanner scan) {
 		System.out.println(election.showAllBallots());
 	}
 
 	public static boolean addCandidateToParty(Elections election, Scanner scan) {
-		if(election.hasStarted) {
+		if (election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
 		}
@@ -92,73 +92,70 @@ public class ProgramHandle {
 		String id = "";
 
 		System.out.println("Please enter the citizen name (first name and last name): ");
-		String name=scan.next()+" "+scan.next();
-		
-		while(!b) {
+		String name = scan.next() + " " + scan.next();
+
+		while (!b) {
 			System.out.println("Please enter the citizen id: ");
 			id = scan.next();
 
-			if(checkId(id))
+			if (checkId(id))
 				b = true;
 		}
 		int yearBirth = LocalDate.now().getYear();
 		System.out.println("Please enter the citizen year of birth: ");
 		yearBirth = scan.nextInt();
 		try {
-			// if(yearBirth > election.year) 
+			// if(yearBirth > election.year)
 			// System.out.println("Dude, you were wont (??) born in the future");
 
-			if((LocalDate.now().getYear() - yearBirth) < 18) {
-				throw new AgeException("This age is not eligble to vote");
+			if ((LocalDate.now().getYear() - yearBirth) < 18) {
+				throw new InvalidInputException("This age is not eligble to vote");
 			}
-		}
-		catch (AgeException e) {
+		} catch (InvalidInputException e) {
 			System.out.println(e.getMsg());
 			return false;
 		}
-		
+
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
 		boolean isQuarintined = scan.nextBoolean();
 
 		System.out.println("Please choose a ballot by id: ");
 		System.out.println(election.showAllBallots());
 		int idChoice = scan.nextInt();
-		Ballot<Votable<Citizen>> ballot = election.findBallotById(idChoice);
+		Ballot<Citizen> ballot = election.findBallotById(idChoice);
 
 		System.out.println("Please choose a party: ");
 		System.out.println(election.showAllParties());
 		int choice = scan.nextInt();
 		ArrayList<Party> parties = election.getParties();
-		Party party = parties.get(choice-1);
+		Party party = parties.get(choice - 1);
 
-		Politician candidate = new Politician(party,name,id,yearBirth,ballot);
-
+		Politician candidate = new Politician(party, name, id, yearBirth, ballot);
 
 		return election.addCandidateToParty(party, candidate);
 	}
 
 	public static boolean addParty(Elections election, Scanner scan) {
-		if(election.hasStarted) {
+		if (election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
 		}
 
 		LocalDate establishDate = LocalDate.now();
-		boolean b= false;
+		boolean b = false;
 		int choice = 0;
 		eFaction faction = eFaction.Center;
 
 		System.out.println("Please enter the party name: ");
-		String name=scan.next();
+		String name = scan.next();
 
-		while(!b) {
+		while (!b) {
 			System.out.println("Please enter the faction of the party: ");
-			System.out.println("1 - "+ eFaction.Left.toString() +"\n"
-					+ "2 - "+ eFaction.Center.toString() +"\n"
-					+ "3 - "+ eFaction.Right.toString() +"\n");
+			System.out.println("1 - " + eFaction.Left.toString() + "\n" + "2 - " + eFaction.Center.toString() + "\n"
+					+ "3 - " + eFaction.Right.toString() + "\n");
 
 			choice = scan.nextInt();
-			switch(choice) {
+			switch (choice) {
 			case 1:
 				faction = eFaction.Left;
 				b = true;
@@ -178,7 +175,7 @@ public class ProgramHandle {
 
 		b = false;
 
-		while(!b) {
+		while (!b) {
 			System.out.println("Please enter the establish Date of the party: ");
 			System.out.println("year: ");
 			int year = scan.nextInt();
@@ -187,11 +184,10 @@ public class ProgramHandle {
 			System.out.println("day: ");
 			int day = scan.nextInt();
 
-			if(!checkDate(year, month)) {
-				establishDate = LocalDate.of(year,month,day);
+			if (!checkDate(year, month)) {
+				establishDate = LocalDate.of(year, month, day);
 				b = true;
-			}
-			else 
+			} else
 				System.out.println("Wrong input. The date is invalid or it isn't accured yet.");
 		}
 
@@ -201,8 +197,8 @@ public class ProgramHandle {
 		return true;
 	}
 
-	public static boolean addCitizen(Elections election, Scanner scan) throws IdException, AgeException {
-		if(election.hasStarted) {
+	public static boolean addCitizen(Elections election, Scanner scan) throws InvalidInputException {
+		if (election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
 		}
@@ -210,15 +206,14 @@ public class ProgramHandle {
 		boolean b = false;
 
 		System.out.println("Please enter the citizen name (first name and last name): ");
-		String name=scan.next() + " "+scan.next();
+		String name = scan.next() + " " + scan.next();
 
 		String id = "";
 
-
-		while(!b) {
+		while (!b) {
 			System.out.println("Please enter the citizen id: ");
 			id = scan.next();
-			if(checkId(id))
+			if (checkId(id))
 				b = true;
 		}
 
@@ -226,13 +221,12 @@ public class ProgramHandle {
 		System.out.println("Please enter the citizen year of birth: ");
 		yearBirth = scan.nextInt();
 		try {
-			// if(yearBirth > election.year) 
+			// if(yearBirth > election.year)
 			// System.out.println("Dude, you were wont (??) born in the future");
 
-			if((LocalDate.now().getYear() - yearBirth) < 18)
-				throw new AgeException("This age is not eligble to vote");
-		}
-		catch (AgeException e) {
+			if ((LocalDate.now().getYear() - yearBirth) < 18)
+				throw new InvalidInputException("This age is not eligble to vote");
+		} catch (InvalidInputException e) {
 			System.out.println(e.getMsg());
 			return false;
 		}
@@ -245,7 +239,7 @@ public class ProgramHandle {
 		int idChoice = scan.nextInt();
 		Ballot<Votable<Citizen>> ballot = election.findBallotById(idChoice);
 
-		Citizen citizen = new Citizen(name,id,yearBirth,ballot);
+		Citizen citizen = new Citizen(name, id, yearBirth, ballot);
 		return election.addCitizen(citizen);
 	}
 
@@ -254,16 +248,14 @@ public class ProgramHandle {
 			if (id.length() == 9) {
 				for (char c : id.toCharArray()) {
 					if (!Character.isDigit(c)) {
-						throw new IdException("EXCEPTION: id must be digits only");
+						throw new InvalidInputException("EXCEPTION: id must be digits only");
 					}
 				}
-			}
-			else {
-				throw new IdException("EXCEPTION: Id length must be 9 digits");
+			} else {
+				throw new InvalidInputException("EXCEPTION: Id length must be 9 digits");
 			}
 			return true;
-		}
-		catch (IdException e) {
+		} catch (InvalidInputException e) {
 			System.out.println(e.getMsg());
 			return false;
 		}
@@ -288,7 +280,7 @@ public class ProgramHandle {
 		case 0:
 			return false;
 		case 1:
-			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan))));
 			addBallot(election, scan);
 			break;
 		case 2:
@@ -316,7 +308,7 @@ public class ProgramHandle {
 		return location;
 	}
 
-	public static void showMenu(Elections election, Scanner scan) throws AgeException, IdException {
+	public static void showMenu(Elections election, Scanner scan) throws InvalidInputException {
 		System.out.println("\nMENU: please enter the number of the desired action:");
 		System.out.println("1: Add a Ballot");
 		System.out.println("2: Add a Citizen");
@@ -329,19 +321,18 @@ public class ProgramHandle {
 		System.out.println("9: Show the results");
 		System.out.println("10: EXIT");
 
-
 		choice = scan.nextInt();
 		if (choice <= 10 && choice >= 1) {
-			if (performAction(election, scan)) 
+			if (performAction(election, scan))
 				System.out.println("Action performed successfuly!!");
 
-			else 
+			else
 				System.out.println("No action performed");
 
 		}
 	}
 
-	public static void startMain() throws AgeException, IdException {
+	public static void startMain() throws InvalidInputException {
 		Scanner scan = new Scanner(System.in);
 		int year = 0;
 		int month = 0;
@@ -355,17 +346,17 @@ public class ProgramHandle {
 			year = scan.nextInt();
 			System.out.println("And now, enter the month of the up coming election: ");
 			month = scan.nextInt();
-			if(checkDate(year, month))
+			if (checkDate(year, month))
 				b = true;
 			else
 				System.out.println("Wrong input. The date is invalid or it is passed.");
 		}
-		Elections election= new Elections(month, year);
-		//hard coded
+		Elections election = new Elections(month, year);
+		// hard coded
 		Address a = new Address("Eilat", "Mosh", 69);
 		Address a1 = new Address("Tel Aviv", "Shenkin", 12);
-		Address a2 = new Address("Yafo", "Hagana",44);
-		Address a3 = new Address("Ashdod", "The City",90);
+		Address a2 = new Address("Yafo", "Hagana", 44);
+		Address a3 = new Address("Ashdod", "The City", 90);
 
 		Ballot<Votable<Citizen>> b1 = new Ballot<>(a1);
 		Ballot<Votable<Citizen>> b2 = new Ballot<>(a);
@@ -380,14 +371,14 @@ public class ProgramHandle {
 		Citizen c5 = null;
 		c = new Soldier("Avner Levi", "234253545", 2000, ab);
 		c1 = new Citizen("Tal Benita", "123456789", 1996, cb);
-		c2 = new Citizen("Shalom Koriyat","987654321" , 2000, ab);
-		c3 = new Citizen("Efrat Apacy" ,"676767676", 1976,b2);
-		c4 = new Citizen("Gabi Guetta","111111111", 1950,cb);
+		c2 = new Citizen("Shalom Koriyat", "987654321", 2000, ab);
+		c3 = new Citizen("Efrat Apacy", "676767676", 1976, b2);
+		c4 = new Citizen("Gabi Guetta", "111111111", 1950, cb);
 		c5 = new Citizen("Dor Adam", "919191919", 1987, b1);
 
-		Party p= new Party("Likud", eFaction.Right, LocalDate.of(1960,4,24));
-		Party p1= new Party("Kahol Lavan", eFaction.Center, LocalDate.of(2019,7,6));
-		Party p2= new Party("Merech", eFaction.Left, LocalDate.of(1987,9,12));
+		Party p = new Party("Likud", eFaction.Right, LocalDate.of(1960, 4, 24));
+		Party p1 = new Party("Kahol Lavan", eFaction.Center, LocalDate.of(2019, 7, 6));
+		Party p2 = new Party("Merech", eFaction.Left, LocalDate.of(1987, 9, 12));
 
 		Politician poli = null;
 		Politician poli1 = null;
@@ -396,11 +387,11 @@ public class ProgramHandle {
 		Politician poli4 = null;
 		Politician poli5 = null;
 		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1);
-		poli1 = new Politician(p1, "Benny Gantz","638162298", 1967, b2);
-		poli2 = new Politician(p2, "Nitzan Horowitz" ,"711426037", 1977,b2);
-		poli3 = new Politician(p, "Miri Regev" ,"821394203", 1974,b1);
-		poli4 = new Politician(p1, "Yair Lapid" ,"485936112", 1968,b2);
-		poli5 = new Politician(p2, "Tamar Zandberg" ,"639048392", 1986,b2);
+		poli1 = new Politician(p1, "Benny Gantz", "638162298", 1967, b2);
+		poli2 = new Politician(p2, "Nitzan Horowitz", "711426037", 1977, b2);
+		poli3 = new Politician(p, "Miri Regev", "821394203", 1974, b1);
+		poli4 = new Politician(p1, "Yair Lapid", "485936112", 1968, b2);
+		poli5 = new Politician(p2, "Tamar Zandberg", "639048392", 1986, b2);
 
 		election.addBallot(b1);
 		election.addBallot(b2);
@@ -425,8 +416,7 @@ public class ProgramHandle {
 		election.addCandidateToParty(p1, poli4);
 		election.addCandidateToParty(p2, poli5);
 
-
-		while (choice !=10) {
+		while (choice != 10) {
 			showMenu(election, scan);
 		}
 
@@ -437,11 +427,11 @@ public class ProgramHandle {
 		int currentYear = LocalDate.now().getYear();
 		int currentMonth = LocalDate.now().getMonthValue();
 
-		if(month < 1 || month > 12)
+		if (month < 1 || month > 12)
 			return false;
-		if(year < currentYear)
+		if (year < currentYear)
 			return false;
-		if(year == currentYear && month < currentMonth)
+		if (year == currentYear && month < currentMonth)
 			return false;
 		return true;
 	}
@@ -451,15 +441,15 @@ public class ProgramHandle {
 		int currentMonth = LocalDate.now().getMonthValue();
 		int currentDay = LocalDate.now().getDayOfMonth();
 
-		if(day < 1 || day > 31)
+		if (day < 1 || day > 31)
 			return false;
-		if(month < 1 || month > 12)
+		if (month < 1 || month > 12)
 			return false;
-		if(year > currentYear)
+		if (year > currentYear)
 			return false;
-		if(year == currentYear && month > currentMonth)
+		if (year == currentYear && month > currentMonth)
 			return false;
-		if(year == currentYear && month == currentMonth && day > currentDay)
+		if (year == currentYear && month == currentMonth && day > currentDay)
 			return false;
 		return true;
 	}

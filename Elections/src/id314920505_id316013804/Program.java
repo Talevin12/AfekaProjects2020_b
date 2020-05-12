@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Program {
-	public static void main(String[] args) throws AgeException, IdException {
+	public static void main(String[] args) throws InvalidInputException {
 //		ProgramHandle.startMain();
 		
 		Ballot<Votable> b = new Ballot<>();

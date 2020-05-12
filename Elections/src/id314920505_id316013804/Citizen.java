@@ -22,7 +22,7 @@ public class Citizen implements Votable	{
 		this(name, id, birthYear, null);
 	}
 
-	public Citizen() throws IdException {
+	public Citizen() throws InvalidInputException {
 		this("Jesus Christ", "1", 0, null);
 	}
 
