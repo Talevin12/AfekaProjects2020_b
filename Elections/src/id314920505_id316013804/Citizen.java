@@ -6,39 +6,21 @@ public class Citizen implements Votable	{
 	protected String name;
 	protected String id;
 	protected int birthYear;
-	protected Ballot<? extends Citizen> ballot;
-//	protected boolean isQuarintined;
 
-	public Citizen(String name, String id, int birthYear, Ballot<? extends Citizen> ballot) {
+	public Citizen(String name, String id, int birthYear) {
 		this.name = name; 
 		this.id = id;
 		this.birthYear = birthYear;
-		this.ballot = ballot;
-	}
-//	public boolean setId(String id){
-//		
-//	}
-	public Citizen(String name, String id, int birthYear) {
-		this(name, id, birthYear, null);
 	}
 
 	public Citizen() throws InvalidInputException {
-		this("Jesus Christ", "1", 0, null);
-	}
-
-	public Ballot<? extends Citizen> getBallot() {
-		return this.ballot;
-	}
-
-	public boolean setBallot(Ballot<Citizen> ballot) {
-		this.ballot = ballot;
-		return true;
+		this("Jesus Christ", "1", 0);
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer str = new StringBuffer();
-		str.append("Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Is Quarentined: ");
+		str.append("Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear);
 
 		return str.toString();
 	}
@@ -66,6 +48,7 @@ public class Citizen implements Votable	{
 	public int getAge(int electionYear) {
 		return (electionYear-this.birthYear);
 	}
+	
 	//citizens are equals if they have the same name, id and year of birth
 	public boolean equals(Citizen citizen) {
 		if(!this.name.equals(citizen.name))
@@ -78,5 +61,9 @@ public class Citizen implements Votable	{
 	}
 	public String getName() {
 		return this.name;
+	}
+	
+	public String getId() {
+		return this.id;
 	}
 }

@@ -8,36 +8,27 @@ public class Ballot<T extends Votable> {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
-	protected ArrayList<T> voters;
+	protected VotableSet<T> voters;
 //	protected int numOfVoters = 0;
 	protected ArrayList<Integer> ballotResults;
+	protected Class<T> type;
 	
-	public Ballot(Address address) {
+	public Ballot(Address address, Class<T> type) {
 		this.address = address;
+		this.type = type;
 		
-		this.voters = new ArrayList<>();
+		this.voters = new VotableSet<>(new ArrayList<T>(), type);
 		
 		this.ballotResults = new ArrayList<>(0);
 		this.ballotResults.add(0);
 	}
 	
-	public Ballot() {
-		this(new Address());
+	public void addVoter(T voter, int electionYear) throws InvalidInputException {
+		this.voters.addVoter(voter);
 	}
 	
-	public boolean addVoter(T voter, int electionYear) {
-//		if(voter.isQuarintined)
-//			return false;
-//		if(isSoldier(voter, electionYear))
-//			return false;
-		this.voters.add(voter);
-
-		return true;
-	}
-	
-	public boolean isSoldier(Citizen voter, int electionsYear) {
-		int age = voter.getAge(electionsYear);
-		return (age >= 18 && age <= 21);
+	public Class<T> getType() {
+		return type;
 	}
 
 	public int getId() {
@@ -65,15 +56,16 @@ public class Ballot<T extends Votable> {
 	
 	@Override
 	public String toString() {
-		String str = "Ballot id: "+ this.id +" | "
+		String str = "This is a "+ this.getType().getSimpleName()
+				   + "Ballot id: "+ this.id +" | "
 				   + "ballot address: "+ this.address.toString();
 		return str;
 	}
 	
 	public String showAllVoters() {
 		StringBuffer str = new StringBuffer();
-		for(int i = 0; i < this.voters.size(); i++) {
-			str.append(this.voters.get(i).toString()+ "\n");
+		for(Votable voter : this.voters.getVoters()) {
+			str.append(voter.toString()+ "\n");
 		}
 		
 		return str.toString();
@@ -82,8 +74,8 @@ public class Ballot<T extends Votable> {
 	public void letsVote(Scanner scn, String parties) {
 		System.out.println("Welcome to Ballot #"+ this.id);
 		int vote;
-		for(int i = 0; i < this.voters.size(); i++) {
-			vote = this.voters.get(i).vote(scn, parties, this.ballotResults.size());
+		for(Votable voter : this.voters.getVoters()) {
+			vote = voter.vote(scn, parties, this.ballotResults.size());
 			this.ballotResults.set(vote, this.ballotResults.get(vote) + 1);
 		}
 	}
@@ -92,14 +84,14 @@ public class Ballot<T extends Votable> {
 		StringBuffer str = new StringBuffer("Results of ballot #"+ this.id +":\n");
 		
 		if(this.ballotResults.get(0) != 0)// Prevents division by zero
-			str.append("Percentage of voters: "+ (double)(100-(100*((double)this.ballotResults.get(0)/(this.voters.size())))) +"%\n");
+			str.append("Percentage of voters: "+ (double)(100-(100*((double)this.ballotResults.get(0)/(this.voters.getSize())))) +"%\n");
 		else
 			str.append("Percentage of votes: "+ 100 +"%\n");
 		
 		str.append("Abstained from voting: "+ this.ballotResults.get(0) +" citizens\n");
 		
-		for(int i = 1; i < this.ballotResults.size(); i++) {
-			if(parties.get(i-1) == null)
+		for(int i = 1; i <= this.ballotResults.size(); i++) {
+			if(parties.get(i) == null)
 				break;
 			else {
 				str.append(parties.get(i-1).getName() +" - "+ this.ballotResults.get(0) +" votes.\n");
@@ -109,9 +101,9 @@ public class Ballot<T extends Votable> {
 		return str.toString();
 	}
 	
-	public boolean isExists(Citizen candidate) {
-		for(int i = 0; i < this.voters.size(); i++) {
-			if(this.voters.get(i).equals(candidate))
+	public boolean isExists(Citizen citizen) {
+		for(Votable voter : this.voters.getVoters()) {
+			if(voter.equals(citizen))
 				return true;
 		}
 		return false;

@@ -1,14 +1,15 @@
 package id314920505_id316013804;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Scanner;
 
 public class SickCitizen extends Citizen implements Sickable {
 	protected LocalDate sickDate;
+	private LocalDate infectedDate;
 	
-	public SickCitizen(String name, String id, int birthYear, 
-			Ballot<SickCitizen> ballot, LocalDate sickDate) {
-		super(name, id, birthYear, ballot);
+	public SickCitizen(String name, String id, int birthYear, LocalDate sickDate) {
+		super(name, id, birthYear);
 		this.sickDate = sickDate;	
 	}
 
@@ -31,5 +32,10 @@ public class SickCitizen extends Citizen implements Sickable {
 		}
 		
 		return super.vote(scan, parties, numOfParties);
+	}
+
+	@Override
+	public Period sicknessPeriod(LocalDate electionsDate) {
+		return this.infectedDate.until(electionsDate);
 	}
 }

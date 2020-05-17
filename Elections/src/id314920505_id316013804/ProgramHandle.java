@@ -9,9 +9,10 @@ import id314920505_id316013804.Party.eFaction;
 public class ProgramHandle {
 	static int choice = 0;
 
-	public static boolean performAction(Elections election, Scanner scan) throws InvalidInputException {
+	public static boolean performAction(Elections election, Scanner scan) 
+			throws InvalidInputException {
+		
 		switch (choice) {
-
 		case 1:
 			return addBallot(election, scan);
 		case 2:
@@ -83,7 +84,7 @@ public class ProgramHandle {
 		System.out.println(election.showAllBallots());
 	}
 
-	public static boolean addCandidateToParty(Elections election, Scanner scan) {
+	public static boolean addCandidateToParty(Elections election, Scanner scan) throws InvalidInputException {
 		if (election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
@@ -102,27 +103,39 @@ public class ProgramHandle {
 				b = true;
 		}
 		int yearBirth = LocalDate.now().getYear();
+		int age = LocalDate.now().getYear() - yearBirth;
+		boolean isSoldier = false;
 		System.out.println("Please enter the citizen year of birth: ");
 		yearBirth = scan.nextInt();
 		try {
 			// if(yearBirth > election.year)
 			// System.out.println("Dude, you were wont (??) born in the future");
 
-			if ((LocalDate.now().getYear() - yearBirth) < 18) {
+			if (age < 18)
 				throw new InvalidInputException("This age is not eligble to vote");
-			}
+			else if(age <= 21)
+				isSoldier = true;
+				
 		} catch (InvalidInputException e) {
 			System.out.println(e.getMsg());
 			return false;
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-		//boolean isQuarintined = scan.nextBoolean();
+		boolean isQuarintined = scan.nextBoolean();
+		
+		Object type = Citizen.class;
+		
+		if(isQuarintined && isSoldier)
+			type = SickSoldier.class;
+		else if(isQuarintined)
+			type = SickCitizen.class;
+		else if(isSoldier)
+			type = Soldier.class;
 
 		System.out.println("Please choose a ballot by id: ");
-		System.out.println(election.showAllBallots());
+		System.out.println(election.showFilteredBallots(type));
 		int idChoice = scan.nextInt();
-		Ballot<? extends Citizen> ballot = election.findBallotById(idChoice);
 
 		System.out.println("Please choose a party: ");
 		System.out.println(election.showAllParties());
@@ -130,9 +143,17 @@ public class ProgramHandle {
 		ArrayList<Party> parties = election.getParties();
 		Party party = parties.get(choice - 1);
 
-		Politician candidate = new Politician(party, name, id, yearBirth, ballot);
-
-		return election.addCandidateToParty(party, candidate);
+		Politician candidate = new Politician(party, name, id, yearBirth);
+		
+		boolean isAddCitizenSuccessful = false;
+		
+		try {
+			 isAddCitizenSuccessful = election.addCandidateToParty(party, candidate, idChoice);
+		} catch (InvalidInputException e) {
+			System.out.println("A citizen with same ID already exists");
+		}
+		
+		 return isAddCitizenSuccessful;
 	}
 
 	public static boolean addParty(Elections election, Scanner scan) {
@@ -197,7 +218,9 @@ public class ProgramHandle {
 		return true;
 	}
 
-	public static boolean addCitizen(Elections election, Scanner scan) throws InvalidInputException {
+	public static boolean addCitizen(Elections election, Scanner scan) 
+			 {
+		
 		if (election.hasStarted) {
 			System.out.println("Elections ended, to see results type 9.");
 			return false;
@@ -220,28 +243,51 @@ public class ProgramHandle {
 		int yearBirth = LocalDate.now().getYear();
 		System.out.println("Please enter the citizen year of birth: ");
 		yearBirth = scan.nextInt();
+		boolean isSoldier = false;
 		try {
 			// if(yearBirth > election.year)
 			// System.out.println("Dude, you were wont (??) born in the future");
-
-			if ((LocalDate.now().getYear() - yearBirth) < 18)
+			
+			int age = (LocalDate.now().getYear() - yearBirth);
+			if (age < 18)
 				throw new InvalidInputException("This age is not eligble to vote");
+			else if(age <= 21) {
+				isSoldier = true;
+			}
 		} catch (InvalidInputException e) {
 			System.out.println(e.getMsg());
 			return false;
 		}
 
 		System.out.println("Please enter if the citizen Quarintined (true,false): ");
-		boolean isQuarintined=scan.nextBoolean();
+		boolean isQuarintined = scan.nextBoolean();
 
+		Object type = Citizen.class;
+		
+		if(isQuarintined && isSoldier)
+			type = SickSoldier.class;
+		else if(isQuarintined)
+			type = SickCitizen.class;
+		else if(isSoldier)
+			type = Soldier.class;
+		
 		System.out.println("Please choose a ballot by id: ");
-		System.out.println(election.showAllBallots());
+		System.out.println(election.showFilteredBallots(type));
 		int idChoice = scan.nextInt();
-		Ballot<? extends Citizen> ballot = election.findBallotById(idChoice);
 
-		Citizen citizen = new Citizen(name, id, yearBirth, ballot);
-		return election.addCitizen(citizen);
+		Citizen citizen = new Citizen(name, id, yearBirth);
+		
+		boolean isAddCitizenSuccessful = false;
+		
+		try {
+			 isAddCitizenSuccessful = election.addCitizen(citizen, idChoice);
+		} catch (InvalidInputException e) {
+			System.out.println("A citizen with same ID already exists");
+		}
+		
+		 return isAddCitizenSuccessful;
 	}
+	
 
 	private static boolean checkId(String id) {
 		try {
@@ -280,20 +326,20 @@ public class ProgramHandle {
 		case 0:
 			return false;
 		case 1:
-			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<Citizen>(getLocationFromUser(scan), Citizen.class));
 			addBallot(election, scan);
 			break;
 		case 2:
-			election.addBallot(new Ballot<SickCitizen>(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<SickCitizen>(getLocationFromUser(scan), SickCitizen.class));
 			addBallot(election, scan);
 			break;
 		case 3:
 //			Ballot<Votable> temp = new Ballot<Soldier>();
-			election.addBallot(new Ballot<Soldier>(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<Soldier>(getLocationFromUser(scan), Soldier.class));
 			addBallot(election, scan);
 			break;
 		case 4:
-			election.addBallot(new Ballot<SickSoldier>(getLocationFromUser(scan)));
+			election.addBallot(new Ballot<SickSoldier>(getLocationFromUser(scan), SickSoldier.class));
 			addBallot(election, scan);
 			break;
 		default:
@@ -358,10 +404,10 @@ public class ProgramHandle {
 		Address a2 = new Address("Yafo", "Hagana", 44);
 		Address a3 = new Address("Ashdod", "The City", 90);
 
-		Ballot<Citizen> b1 = new Ballot<>(a1);
-		Ballot<Citizen> b2 = new Ballot<>(a);
-		Ballot<SickCitizen> cb = new Ballot<>(a2);
-		Ballot<Soldier> ab = new Ballot<>(a3);
+		Ballot<Citizen> b1 = new Ballot<>(a1, Citizen.class);
+		Ballot<Citizen> b2 = new Ballot<>(a, Citizen.class);
+		Ballot<SickCitizen> cb = new Ballot<>(a2, SickCitizen.class);
+		Ballot<Soldier> ab = new Ballot<>(a3, Soldier.class);
 
 		Citizen c = null;
 		Citizen c1 = null;
@@ -369,12 +415,12 @@ public class ProgramHandle {
 		Citizen c3 = null;
 		Citizen c4 = null;
 		Citizen c5 = null;
-		c = new Soldier("Avner Levi", "234253545", 2000, ab);
-		c1 = new Citizen("Tal Benita", "123456789", 1996, cb);
-		c2 = new Citizen("Shalom Koriyat", "987654321", 2000, ab);
-		c3 = new Citizen("Efrat Apacy", "676767676", 1976, b2);
-		c4 = new Citizen("Gabi Guetta", "111111111", 1950, cb);
-		c5 = new Citizen("Dor Adam", "919191919", 1987, b1);
+		c = new Soldier("Avner Levi", "234253545", 2000);
+		c1 = new Citizen("Tal Benita", "123456789", 1996);
+		c2 = new Citizen("Shalom Koriyat", "987654321", 2000);
+		c3 = new Citizen("Efrat Apacy", "676767676", 1976);
+		c4 = new Citizen("Gabi Guetta", "111111111", 1950);
+		c5 = new Citizen("Dor Adam", "919191919", 1987);
 
 		Party p = new Party("Likud", eFaction.Right, LocalDate.of(1960, 4, 24));
 		Party p1 = new Party("Kahol Lavan", eFaction.Center, LocalDate.of(2019, 7, 6));
@@ -386,35 +432,35 @@ public class ProgramHandle {
 		Politician poli3 = null;
 		Politician poli4 = null;
 		Politician poli5 = null;
-		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960, b1);
-		poli1 = new Politician(p1, "Benny Gantz", "638162298", 1967, b2);
-		poli2 = new Politician(p2, "Nitzan Horowitz", "711426037", 1977, b2);
-		poli3 = new Politician(p, "Miri Regev", "821394203", 1974, b1);
-		poli4 = new Politician(p1, "Yair Lapid", "485936112", 1968, b2);
-		poli5 = new Politician(p2, "Tamar Zandberg", "639048392", 1986, b2);
+		poli = new Politician(p, "Benjamin Netanyahu", "528369183", 1960);
+		poli1 = new Politician(p1, "Benny Gantz", "638162298", 1967);
+		poli2 = new Politician(p2, "Nitzan Horowitz", "711426037", 1977);
+		poli3 = new Politician(p, "Miri Regev", "821394203", 1974);
+		poli4 = new Politician(p1, "Yair Lapid", "485936112", 1968);
+		poli5 = new Politician(p2, "Tamar Zandberg", "639048392", 1986);
 
 		election.addBallot(b1);
 		election.addBallot(b2);
 		election.addBallot(cb);
 		election.addBallot(ab);
 
-		election.addCitizen(c);
-		election.addCitizen(c1);
-		election.addCitizen(c2);
-		election.addCitizen(c3);
-		election.addCitizen(c4);
-		election.addCitizen(c5);
-
-		election.addParty(p);
-		election.addParty(p1);
-		election.addParty(p2);
-
-		election.addCandidateToParty(p, poli);
-		election.addCandidateToParty(p1, poli1);
-		election.addCandidateToParty(p2, poli2);
-		election.addCandidateToParty(p, poli3);
-		election.addCandidateToParty(p1, poli4);
-		election.addCandidateToParty(p2, poli5);
+//		election.addCitizen(c);
+//		election.addCitizen(c1);
+//		election.addCitizen(c2);
+//		election.addCitizen(c3);
+//		election.addCitizen(c4);
+//		election.addCitizen(c5);
+//
+//		election.addParty(p);
+//		election.addParty(p1);
+//		election.addParty(p2);
+//
+//		election.addCandidateToParty(p, poli);
+//		election.addCandidateToParty(p1, poli1);
+//		election.addCandidateToParty(p2, poli2);
+//		election.addCandidateToParty(p, poli3);
+//		election.addCandidateToParty(p1, poli4);
+//		election.addCandidateToParty(p2, poli5);
 
 		while (choice != 10) {
 			showMenu(election, scan);
