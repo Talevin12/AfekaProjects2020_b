@@ -8,5 +8,5 @@ Elections management system
 > Victor Taubkin 
 
 ### Developers
-> Tal Levin 314920505  
-> Tal Benita 316013804
+* Tal Levin 314920505  
+* Tal Benita 316013804
