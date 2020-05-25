@@ -8,8 +8,9 @@ public class SickSoldier extends Soldier implements Sickable{
 
 	private LocalDate infectedDate;
 
-	public SickSoldier(String name, String id, int birthYear) {
+	public SickSoldier(String name, String id, int birthYear, LocalDate infectedDate) {
 		super(name, id, birthYear);
+		this.infectedDate = infectedDate;
 	}
 	
 	@Override
@@ -34,8 +35,17 @@ public class SickSoldier extends Soldier implements Sickable{
 	}
 
 	@Override
-	public Period sicknessPeriod(LocalDate electionsDate) {
-		return this.infectedDate.until(electionsDate);
+	public Period sicknessPeriod() {
+		return this.infectedDate.until(LocalDate.now());
+	}
+	
+	@Override
+	public String toString() {
+		String str ="";
+		Period period = this.sicknessPeriod();
+		str += "Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Sick for: "+ period.getYears() +" years, "+ period.getMonths() +" months and "+ period.getDays() +" days to this date ("+ LocalDate.now().toString() +")";
+
+		return str;
 	}
 
 }

@@ -35,7 +35,6 @@ public class VotableSet<T extends Votable> {
 	public int getSize() {
 		return this.voters.size();
 	}
-	
 	public T get(int index) {
 		return this.voters.get(index);
 	}

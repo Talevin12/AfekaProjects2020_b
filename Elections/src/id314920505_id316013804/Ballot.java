@@ -3,13 +3,11 @@ package id314920505_id316013804;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// testing
 public class Ballot<T extends Votable> {
 	protected int id;
 	protected Address address;
 	protected double votePercentage;
 	protected VotableSet<T> voters;
-//	protected int numOfVoters = 0;
 	protected ArrayList<Integer> ballotResults;
 	protected Class<T> type;
 	
@@ -34,11 +32,6 @@ public class Ballot<T extends Votable> {
 	public int getId() {
 		return this.id;
 	}
-	
-//	public boolean setBallotesResults(int numOfParties) {
-//		this.ballotResults = new ArrayList<>(numOfParties);
-//		return true;
-//	}
 
 	public boolean setId(int ballotIdCounter) {
 		this.id = ballotIdCounter;
@@ -75,6 +68,7 @@ public class Ballot<T extends Votable> {
 		System.out.println("Welcome to Ballot #"+ this.id);
 		int vote;
 		for(Votable voter : this.voters.getVoters()) {
+			System.out.println("\nHello, "+ voter.getName());
 			vote = voter.vote(scn, parties, this.ballotResults.size());
 			this.ballotResults.set(vote, this.ballotResults.get(vote) + 1);
 		}
@@ -90,18 +84,14 @@ public class Ballot<T extends Votable> {
 		
 		str.append("Abstained from voting: "+ this.ballotResults.get(0) +" citizens\n");
 		
-		for(int i = 1; i <= this.ballotResults.size(); i++) {
-			if(parties.get(i) == null)
-				break;
-			else {
-				str.append(parties.get(i-1).getName() +" - "+ this.ballotResults.get(0) +" votes.\n");
-			}
+		for(int i = 1; i < this.ballotResults.size(); i++) {
+				str.append(parties.get(i-1).getName() +" - "+ this.ballotResults.get(i) +" votes.\n");
 		}
 		
 		return str.toString();
 	}
 	
-	public boolean isExists(Citizen citizen) {
+	public boolean isExists(T citizen) {
 		for(Votable voter : this.voters.getVoters()) {
 			if(voter.equals(citizen))
 				return true;

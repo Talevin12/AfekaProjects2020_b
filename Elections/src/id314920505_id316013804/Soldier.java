@@ -2,7 +2,7 @@ package id314920505_id316013804;
 
 import java.util.Scanner;
 
-public class Soldier extends Citizen  {
+public class Soldier extends Citizen {
 	
 	public Soldier(String name, String id, int birthYear) {
 		super(name, id, birthYear);

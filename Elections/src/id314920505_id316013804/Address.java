@@ -28,6 +28,6 @@ public class Address {
 
 	@Override
 	public String toString() {
-		return this.street +", "+ this.houseNo +", "+ this.city;
+		return this.street +" "+ this.houseNo +", "+ this.city;
 	}
 }

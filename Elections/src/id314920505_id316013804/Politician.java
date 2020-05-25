@@ -2,7 +2,7 @@ package id314920505_id316013804;
 
 import java.util.Scanner;
 
-public class Politician extends Citizen {
+public class Politician extends Citizen implements Votable, Comparable<Politician> {
 	private Party party;
 	private int primeriesVotes = 0;
 	
@@ -23,10 +23,6 @@ public class Politician extends Citizen {
 	//politicians are equals just like citizens
 	public boolean equals(Politician politician) {
 		return super.equals(politician);
-	}
-	
-	public String toString() {
-		return super.toString();
 	}
 	
 	public int voteForPrimeries(Scanner scn, String candidates, int numOfCandidates) {
@@ -50,5 +46,10 @@ public class Politician extends Citizen {
 	
 	public void voted() {
 		this.primeriesVotes++;
+	}
+
+	@Override
+	public int compareTo(Politician other) {
+		return other.primeriesVotes - this.primeriesVotes;
 	}
 }

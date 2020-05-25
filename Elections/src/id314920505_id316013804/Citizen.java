@@ -19,17 +19,16 @@ public class Citizen implements Votable	{
 
 	@Override
 	public String toString() {
-		StringBuffer str = new StringBuffer();
-		str.append("Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear);
+		String str = "";
+		str += "Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear;
 
-		return str.toString();
+		return str;
 	}
 
 	@Override
 	public int vote(Scanner scn, String parties, int numOfParties) {
 		boolean b = false;
 		int choice = 0;
-		System.out.println("\nHello, "+ this.name);
 
 		while(!b) {
 			System.out.println("Choose party to vote for:");

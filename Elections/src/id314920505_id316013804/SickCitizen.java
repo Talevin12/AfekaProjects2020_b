@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class SickCitizen extends Citizen implements Sickable {
 	protected LocalDate sickDate;
-	private LocalDate infectedDate;
 	
 	public SickCitizen(String name, String id, int birthYear, LocalDate sickDate) {
 		super(name, id, birthYear);
@@ -35,7 +34,16 @@ public class SickCitizen extends Citizen implements Sickable {
 	}
 
 	@Override
-	public Period sicknessPeriod(LocalDate electionsDate) {
-		return this.infectedDate.until(electionsDate);
+	public Period sicknessPeriod() {
+		return this.sickDate.until(LocalDate.now());
+	}
+	
+	@Override
+	public String toString() {
+		String str ="";
+		Period period = this.sicknessPeriod();
+		str += "Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Sick for: "+ period.getYears() +" years, "+ period.getMonths() +" months and "+ period.getDays() +" days to this date ("+ LocalDate.now().toString() +")";
+
+		return str;
 	}
 }

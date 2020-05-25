@@ -9,7 +9,7 @@ public class Elections {
 //	protected Ballot[] ballots;
 	
 	// All citizens 
-	protected VotableSet<? extends Votable> allVotables;
+	protected VotableSet<Citizen> allVotables;
 
 	// Choose
 	// OR 
@@ -18,16 +18,15 @@ public class Elections {
 	
 	// OR
 	// Separate ballots for each type
+	
 //	protected ArrayList<Ballot<Citizen>> citizenBallots;	
 //	protected ArrayList<Ballot<SickCitizen>> sickCitizenBallots;	
 //	protected ArrayList<Ballot<Soldier>> soldierBallots;	
 //	protected ArrayList<Ballot<SickSoldier>> sickSoldierBallots;	
 	
 	
-//	protected Party[] parties;
 	protected ArrayList<Party> parties;
 	protected int ballotIdCounter = 1;
-//	protected int partiesCounter = 0;
 	protected ArrayList<Integer> results;
 	protected boolean hasStarted = false;
 
@@ -35,6 +34,7 @@ public class Elections {
 	public Elections(int month, int year) {
 		this.year = year;
 		this.month = month;
+		this.allVotables = new VotableSet<>(new ArrayList<Citizen>(), Citizen.class);
 		this.ballots = new ArrayList<>();
 		this.parties = new ArrayList<>();
 		this.results = new ArrayList<>();
@@ -62,18 +62,25 @@ public class Elections {
 	private <C extends Votable>  List<Ballot<C>> getBallotsByType(Class<C> clazz) {
 		List<Ballot<C>> ballotsOfTypeCResults = new ArrayList<Ballot<C>>();
 		
-		for(Ballot<? extends Votable> b : this.ballots) {
-			if (b.getType() == clazz)
-				ballotsOfTypeCResults.add((Ballot<C>)b);
+		for(Ballot<? extends Votable> ballot : this.ballots) {
+			if (ballot.getType() == clazz)
+				ballotsOfTypeCResults.add((Ballot<C>)ballot);
 		}
 		
 		return ballotsOfTypeCResults;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <C extends Votable> boolean addCitizen(C citizen, int ballotId) throws InvalidInputException {
-		@SuppressWarnings("unchecked")
-		Ballot<C> tempBallot = this.<C>findBallotById(ballotId, (Class<C>)citizen.getClass());
+		Class<C> type = (Class<C>) citizen.getClass();
+		if(type == Politician.class)
+			type = (Class<C>) Citizen.class;
+		else if(type == SickPolitician.class)
+			type = (Class<C>) SickCitizen.class;
+		Ballot<C> tempBallot = this.<C>findBallotById(ballotId, type);
+
 		if(tempBallot != null) {
+			this.allVotables.addVoter((Citizen) citizen);
 			tempBallot.addVoter(citizen, this.year);
 			return true;
 		}
@@ -90,23 +97,22 @@ public class Elections {
 	private void increaseBallotsResultList() {
 		for(Ballot<? extends Votable> b : this.ballots) {
 			b.ballotResults.add(0);
-		}
-		
+		}	
 	}
-	public boolean addCandidateToParty(Party party, Politician candidate, int ballotId) throws InvalidInputException {
+	public boolean addCandidateToParty(Politician candidate, int ballotId) throws InvalidInputException {
 		if(isCandidateExists(candidate))
 			return false;
 		
 		boolean b = false;
 		int i = 0;
 		while(!b && i <= this.parties.size()) {
-			if(this.parties.get(i) == party)
+			if(this.parties.get(i) == candidate.getParty())
 				b = true;
 			i++;
 		}
 		if(b) {
-			addCitizen(candidate, ballotId);
-			party.addCandidate(candidate);
+			this.<Citizen>addCitizen(candidate, ballotId);
+			candidate.getParty().addCandidate(candidate);
 		}
 		return b;
 	}
@@ -178,7 +184,6 @@ public class Elections {
 	}
 
 	private void countVotes() {
-//		this.results = new ArrayList<Integer>(this.parties.size()+1);
 		for(int i = 0; i < this.ballotIdCounter-1; i++) {
 			for(int j = 0; j < this.parties.size()+1; j++) {
 				this.results.set(j,  this.results.get(j) + (int)this.ballots.get(i).ballotResults.get(j));
@@ -199,7 +204,7 @@ public class Elections {
 		str.append("Abstained from voting: "+ this.results.get(0) +" citizens\n");
 
 		for(int i = 1; i <= this.parties.size(); i++) {
-			str.append(this.parties.get(i-1).getName() +"- "+ this.results.get(0) +" votes. \n");
+			str.append(this.parties.get(i-1).getName() +"- "+ this.results.get(i) +" votes. \n");
 		}
 		
 		str.append("The leading party for votes in the elections are: "+ findLeadingPartyName() +"\n");
@@ -231,50 +236,8 @@ public class Elections {
 		}
 		return false;
 	}
-//	//to avoid creating the same citizen
-//	private boolean isCitizenExists(Citizen voter) {
-//		for(int i = 0; i < this.ballotIdCounter-1; i++) {
-//			if(this.ballots.get(i).isExists(voter))
-//				return true;
-//		}
-//		return false;
-//	}
-
+	
 	public ArrayList<Party> getParties() {
 		return this.parties;
 	}
-	
-	
-//	// If we have one list for all ballots 
-//	public List<Ballot<? extends Votable>> getRightBallot(Votable voter) {		
-//		
-//		List<Ballot<? extends Votable>> foundBallots = new ArrayList<>();		
-//		
-//		for (Ballot<? extends Votable> avilableBallot : ballots) {
-//			if (voter.getClass() == avilableBallot.getType()) {
-//				foundBallots.add(avilableBallot);
-//			}
-//		}
-//		
-//		return foundBallots;
-//	}
-//	
-//	// If we have one list for each ballot type 
-//	public ArrayList<Ballot<? extends Votable>> getRightBallot2(Votable voter) {		
-//
-//		if (voter.getClass() == Soldier.class) {
-//			return soldierBallots;
-//		} else if (voter.getClass() == SickSoldier.class) {
-//			return sickSoldierBallots;
-//		} else if (voter.getClass() == Citizen.class) {
-//			return citizenBallots;
-//		} else if (voter.getClass() == SickCitizen.class) {
-//			return sickCitizenBallots;
-//		}
-//	}
-
-
-		
-	
-	
 }

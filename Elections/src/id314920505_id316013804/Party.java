@@ -2,6 +2,7 @@ package id314920505_id316013804;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Party {
@@ -11,8 +12,6 @@ public class Party {
 	protected eFaction faction;
 	protected LocalDate establishDate;
 	protected ArrayList<Politician> candidates;
-//	protected int numOfCandidates = 0;
-//	protected ArrayList<Integer> primeriesResults;
 
 	public Party(String name, eFaction faction, LocalDate establishDate) {
 		this.name = name;
@@ -80,14 +79,6 @@ public class Party {
 	}
 
 	public void sortByPrimeriesVotes() {
-		Politician temp;
-		for (int i = 0; i < this.candidates.size()-1; i++) 
-			for (int j = 0; j < this.candidates.size()-i-1; j++) 
-				if (this.candidates.get(j).getPrimeriesVotes() > this.candidates.get(j+1).getPrimeriesVotes()) 
-				{
-					temp = this.candidates.get(j); 
-					this.candidates.set(j, this.candidates.get(j+1)); 
-					this.candidates.set(j+1, temp); 
-				} 
+		Collections.sort(this.candidates);
 	}
 }
