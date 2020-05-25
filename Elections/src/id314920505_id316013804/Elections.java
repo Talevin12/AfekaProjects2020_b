@@ -136,6 +136,14 @@ public class Elections {
 
 		return str.toString();
 	}
+	
+	public boolean checkBallotInput(int ballotId, Object type) {
+		if(ballotId > this.ballots.size() || ballotId <= 0)
+			return false;
+		if(this.ballots.get(ballotId-1).getType() == type)
+			return true;
+		return false;
+	}
 
 	public String showAllVoters() {
 

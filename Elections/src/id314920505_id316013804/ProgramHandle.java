@@ -136,13 +136,30 @@ public class ProgramHandle {
 			infectionDate = LocalDate.of(scan.nextInt(), scan.nextInt(), scan.nextInt());
 		}
 
-		System.out.println("Please choose a ballot by id: ");
-		System.out.println(election.showFilteredBallots(type));
-		int idChoice = scan.nextInt();
+		b = false;
+		String filteredBallots = election.showFilteredBallots(type);
+		int idChoice = 0;
+		while(!b) {
+			System.out.println("Please choose a ballot by id: ");
+			System.out.println(filteredBallots);
+			idChoice = scan.nextInt();
+			if(election.checkBallotInput(idChoice, type))
+				b = true;
+			else
+				System.out.println("Wrong Input! Try again");
+		}
 
-		System.out.println("Please choose a party: ");
-		System.out.println(election.showAllParties());
-		int choice = scan.nextInt();
+		b = false;
+		int choice = 0;
+		while(!b) {
+			System.out.println("Please choose a party: ");
+			System.out.println(election.showAllParties());
+			choice = scan.nextInt();
+			if(choice > election.parties.size() || choice <= 0)
+				System.out.println("Wrong Input! Try again");
+			else
+				b = true;
+		}
 		ArrayList<Party> parties = election.getParties();
 		Party party = parties.get(choice - 1);
 
@@ -297,9 +314,18 @@ public class ProgramHandle {
 		else if(isSoldier)
 			type = Soldier.class;
 
-		System.out.println("Please choose a ballot by id: ");
-		System.out.println(election.showFilteredBallots(type));
-		int idChoice = scan.nextInt();
+		b = false;
+		String filteredBallots = election.showFilteredBallots(type);
+		int idChoice = 0;
+		while(!b) {
+			System.out.println("Please choose a ballot by id: ");
+			System.out.println(filteredBallots);
+			idChoice = scan.nextInt();
+			if(election.checkBallotInput(idChoice, type))
+				b = true;
+			else
+				System.out.println("Wrong Input! Try again");
+		}
 
 		Citizen citizen = null;
 
