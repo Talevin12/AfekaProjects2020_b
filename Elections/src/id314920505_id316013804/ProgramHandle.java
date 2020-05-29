@@ -278,7 +278,7 @@ public class ProgramHandle {
 			// if(yearBirth > election.year)
 			// System.out.println("Dude, you were wont (??) born in the future");
 
-			int age = (LocalDate.now().getYear() - birthYear);
+			int age = (election.year - birthYear);
 			if (age < 18)
 				throw new InvalidInputException("This age is not eligble to vote");
 			else if(age <= 21) {
