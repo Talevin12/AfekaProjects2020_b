@@ -186,10 +186,10 @@ public class ProgramHandle {
 			return false;
 		}
 
-		LocalDate establishDate = LocalDate.now();
+		LocalDate establishDate = null;
 		boolean b = false;
 		int choice = 0;
-		eFaction faction = eFaction.Center;
+		eFaction faction = null;
 
 		scan.nextLine();
 		System.out.println("Please enter the party name: ");
@@ -229,7 +229,7 @@ public class ProgramHandle {
 			int month = scan.nextInt();
 			System.out.println("day: ");
 			int day = scan.nextInt();
-
+			
 			if (!checkDate(year, month)) {
 				establishDate = LocalDate.of(year, month, day);
 				b = true;

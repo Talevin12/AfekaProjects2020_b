@@ -6,7 +6,11 @@ public class InvalidInputException extends Exception{
 	private String msg;
 	
 	public InvalidInputException(String msg) {
-		this.msg = msg;
+		this.msg += "*"+ msg +"\n";
+	}
+	
+	public void Clear() {
+		this.msg = "";
 	}
 	
 	public String getMsg() {
