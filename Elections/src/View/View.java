@@ -2,11 +2,14 @@ package View;
 
 import java.time.LocalDate;
 
-import id314920505_id316013804.*;
+import Model.Address;
+import Model.Ballot;
+import Model.Party;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -24,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class View {
@@ -31,6 +35,7 @@ public class View {
 	private Group root;
 	private Scene startMenu;
 	private Scene app;
+	public Popup popup = new Popup();
 
 	private Text monthTxt;
 	private Text yearTxt;
@@ -47,7 +52,7 @@ public class View {
 	private Button addPartyBtn;
 	private Button addCandidateBtn;
 	private Button showBallotsBtn;
-	private Button showVotersBtn;
+	private Button showCitizensBtn;
 	private Button showPartiesBtn;
 	private Button startElectionsBtn;
 	private Button resultsBtn;
@@ -55,10 +60,10 @@ public class View {
 
 	private VBox platform;
 
-	private Button citizenBallotBtn;
-	private Button coronaBallotBtn;
-	private Button armyBallotBtn;
-	private Button armyCoronaBallotBtn;
+	private Button citizenBallotBtn = new Button("Regular Ballot");///////Need to initialize all button who needs event handles
+	private Button coronaBallotBtn = new Button("Corona Ballot");
+	private Button armyBallotBtn = new Button("Army Ballot");
+	private Button armyCoronaBallotBtn = new Button("Army-Corona Ballot");
 
 	private Text cityTxt;
 	private Text streetTxt;
@@ -66,7 +71,7 @@ public class View {
 	private TextField cityField; 
 	private TextField streetField;
 	private TextField houseNumField;
-	private Button ballotSubmit;
+	private Button ballotSubmit = new Button("Submit");
 
 	private Text fNameTxt;
 	private Text lNameTxt;
@@ -83,9 +88,9 @@ public class View {
 	private RadioButton isQuarintinedYESRadioBtn;
 	private RadioButton isQuarintinedNORadioBtn;
 	private DatePicker infectionDatePicker;
-	private Button checkCitizenTypeBtn;
-	private Button addCitizenSubmitBtn;
-	
+	private Button checkCitizenTypeBtn = new Button("**Check**");
+	private Button addCitizenSubmitBtn = new Button("Submit");
+
 	private Text partyNameTxt;
 	private Text factionTxt;
 	private Text establishDateTxt;
@@ -94,23 +99,23 @@ public class View {
 	private RadioButton leftRadioBtn;
 	private RadioButton rightRadioBtn;
 	private DatePicker establishDatePicker;
-	private Button partySubmitBtn;
-	
+	private Button partySubmitBtn = new Button("Submit");
+
 	private Text partyTxt;
 	private ChoiceBox<Party> partyChoiceBox;
-	
+
 	private Text showBallotsTitle;
 	private TableView ballotTable;
-	
+
 	private Text showCitizensTitle;
 	private TableView citizenTable;
-	
+
 	private Text showPartyTitle;
 	private TableView partyTable;
-	
 
 	public View(Stage stage) {
 		this.root = new Group();
+		stage.setTitle("Elections");
 
 		Text txt = new Text("Elections");
 		txt.setFill(Color.ROYALBLUE);
@@ -141,18 +146,9 @@ public class View {
 		vb.setAlignment(Pos.CENTER);
 
 
-		this.startMenu = new Scene(vb,1000,600);
-		stage.setTitle("Elections");
-		stage.setScene(this.startMenu);
-		stage.show();
-
-		startMenuSubmit.setOnAction(e ->  stage.setScene(this.app));
-
-
-
+		this.startMenu = new Scene(vb,1000,600);		
+		
 		///////////////////////////////////////////////////////////
-
-
 
 		this.naviMenu = new VBox();
 		this.naviMenu.setPadding(new Insets(10));
@@ -169,7 +165,7 @@ public class View {
 
 		this.showBallotsBtn = new Button("Show Balllots");
 
-		this.showVotersBtn = new Button("Show all Voters");
+		this.showCitizensBtn = new Button("Show all Voters");
 
 		this.showPartiesBtn = new Button("Show Parties");
 
@@ -178,32 +174,33 @@ public class View {
 		this.resultsBtn = new Button("Elections Results");
 
 		this.exitBtn = new Button("EXIT");
+		this.exitBtn.setOnAction(e ->  stage.close());
 
-		this.naviMenu.getChildren().addAll(addBallotBtn, addCitizenBtn, addPartyBtn, addCandidateBtn, showBallotsBtn, showVotersBtn, showPartiesBtn, startElectionsBtn, resultsBtn, exitBtn);
+		this.naviMenu.getChildren().addAll(addBallotBtn, addCitizenBtn, addPartyBtn, addCandidateBtn, showBallotsBtn, showCitizensBtn, showPartiesBtn, startElectionsBtn, resultsBtn, exitBtn);
 		this.naviMenu.setMaxWidth(150);
 		this.naviMenu.setMinWidth(150);
 
-		//
-		this.platform = showParties();
-
-		//
+		this.platform = new VBox();
 
 		this.splitPane = new SplitPane(this.naviMenu, this.platform);
 		this.app = new Scene(splitPane, 1000, 600);
+		
 		stage.setTitle("Elections");
+		stage.setScene(this.startMenu);
+		stage.show();
 	}
 
-	private VBox chooseBallot() {
-		this.citizenBallotBtn = new Button("Regular Ballot");
+	public VBox chooseBallot() {
+//		this.citizenBallotBtn = new Button("Regular Ballot");
 		this.citizenBallotBtn.setMinSize(200, 80);
 
-		this.coronaBallotBtn = new Button("Corona Ballot");
+//		this.coronaBallotBtn = new Button("Corona Ballot");
 		this.coronaBallotBtn.setMinSize(200, 80);
 
-		this.armyBallotBtn = new Button("Army Ballot");
+//		this.armyBallotBtn = new Button("Army Ballot");
 		this.armyBallotBtn.setMinSize(200, 80);
 
-		this.armyCoronaBallotBtn = new Button("Army-Corona Ballot");
+//		this.armyCoronaBallotBtn = new Button("Army-Corona Ballot");
 		this.armyCoronaBallotBtn.setMinSize(200, 80);
 
 		VBox buttons = new VBox(citizenBallotBtn, coronaBallotBtn, armyBallotBtn, armyCoronaBallotBtn);
@@ -235,7 +232,6 @@ public class View {
 		HBox.setMargin(houseNumTxt, new Insets(20,20,20,20)); 
 		HBox.setMargin(houseNumField, new Insets(20,20,20,20));
 
-		this.ballotSubmit = new Button("Submit");
 		this.ballotSubmit.setMinSize(150, 60);
 
 		VBox root = new VBox();
@@ -295,30 +291,28 @@ public class View {
 		});
 		HBox hBoxInfectedDate = new HBox();
 		hBoxInfectedDate.getChildren().addAll(infectionDateTxt, infectionDatePicker);
-		
-		this.checkCitizenTypeBtn = new Button("**Check**");
+
 		this.checkCitizenTypeBtn.setMinSize(150, 60);
-		
+
 		this.ballotTxt = new Text("Choose Ballot: ");
 		this.ballotChoiceBox = new ChoiceBox<Ballot>();
 		HBox hBoxBallot = new HBox(ballotTxt, ballotChoiceBox);
-		
-		this.addCitizenSubmitBtn = new Button("Submit");
+
 		this.addCitizenSubmitBtn.setMinSize(150, 60);
-		
+
 		root.getChildren().addAll(hBoxFName, hBoxLName, hBoxId, hBoxBirthYear, hBoxIsQuarintined, hBoxInfectedDate, checkCitizenTypeBtn, hBoxBallot, addCitizenSubmitBtn);
 		root.setSpacing(20);
 		root.setAlignment(Pos.TOP_CENTER);
 		return root;
 	}
-	
+
 	public VBox addParty() {
 		VBox root = new VBox();
-		
+
 		this.partyNameTxt = new Text("Party Name: ");
 		this.partyNameField = new TextField();
 		HBox hBoxPartyName = new HBox(partyNameTxt, partyNameField);
-		
+
 		this.factionTxt = new Text("Faction: ");
 		ToggleGroup tg = new ToggleGroup();
 		this.leftRadioBtn = new RadioButton("Left	");
@@ -328,7 +322,7 @@ public class View {
 		this.rightRadioBtn = new RadioButton("Right");
 		this.rightRadioBtn.setToggleGroup(tg);
 		HBox hBoxFaction = new HBox(factionTxt, leftRadioBtn, centerRadioBtn, rightRadioBtn);
-		
+
 		this.establishDateTxt = new Text("Date of Establishment: ");
 		this.establishDatePicker = new DatePicker();
 		establishDatePicker.setDayCellFactory(d -> new DateCell() {
@@ -339,34 +333,33 @@ public class View {
 			}
 		});
 		HBox hBoxEstablishDate = new HBox(establishDateTxt, establishDatePicker);
-		
-		this.partySubmitBtn = new Button("Submit");
+
 		this.partySubmitBtn.setMinSize(150, 60);
-		
+
 		root.getChildren().addAll(hBoxPartyName, hBoxFaction, hBoxEstablishDate, partySubmitBtn);
 		root.setPadding(new Insets(20));
 		root.setAlignment(Pos.CENTER);
 		root.setSpacing(25);
 		return root;
 	}
-	
+
 	public VBox addCandidate() {
 		VBox root = addCitizen();
-		
+
 		this.partyTxt = new Text("Party: ");
 		this.partyChoiceBox = new ChoiceBox<Party>();
 		HBox hBoxParty = new HBox(partyTxt, partyChoiceBox);
-		
+
 		root.getChildren().add(root.getChildren().size()-1, hBoxParty);
 		return root;
 	}
-	
+
 	public VBox showBallots() {
 		VBox root = new VBox();
-		
+
 		this.showBallotsTitle = new Text("Show All Ballots");
 		this.showBallotsTitle.setStyle("-fx-font: 45 arial;");
-		
+
 		this.ballotTable = new TableView<>();
 		TableColumn<String, Ballot> typeC = new TableColumn<>("Type");
 		typeC.setMinWidth(170);
@@ -386,17 +379,17 @@ public class View {
 		houseNoC.setMinWidth(170);	
 		addressC.getColumns().addAll(cityC, streetC, houseNoC);
 		this.ballotTable.getColumns().addAll(typeC, idC, addressC);
-		
+
 		root.getChildren().addAll(showBallotsTitle, ballotTable);
 		return root;
 	}
-	
+
 	public VBox showCitizens() {
 		VBox root = new VBox();
-		
+
 		this.showCitizensTitle = new Text("Show All Citizens");
 		this.showCitizensTitle.setStyle("-fx-font: 45 arial;");
-		
+
 		this.citizenTable = new TableView<>();
 		TableColumn<String, Ballot> nameC = new TableColumn<>("Name");
 		nameC.setMinWidth(140);
@@ -419,17 +412,17 @@ public class View {
 		daysC.setMaxWidth(425/3);		
 		sickPeriodC.getColumns().addAll(yearsC, monthsC, daysC);
 		this.citizenTable.getColumns().addAll(nameC, idC, birthYearC, sickPeriodC);
-		
+
 		root.getChildren().addAll(showCitizensTitle, citizenTable);
 		return root;
 	}
-	
+
 	public VBox showParties() {
 		VBox root = new VBox();
-		
+
 		this.showPartyTitle = new Text("Show All Parties");
 		this.showPartyTitle.setStyle("-fx-font: 45 arial;");
-		
+
 		this.partyTable = new TableView<>();
 		TableColumn<String, Ballot> nameC = new TableColumn<>("Name");
 		nameC.setMinWidth(850/4);
@@ -441,8 +434,101 @@ public class View {
 		establishDateC.setMinWidth(850/2);
 		establishDateC.setMaxWidth(850/2);
 		this.partyTable.getColumns().addAll(nameC, factionC, establishDateC);
-		
+
 		root.getChildren().addAll(showPartyTitle, partyTable);
 		return root;
 	}
+
+	//// event handles
+	
+	public void EventHandlerToStartMenuSubmitButton(EventHandler<ActionEvent> event) {
+		this.startMenuSubmit.setOnAction(event);
+	}
+	
+	public void EventHandlerToAddBallotButton(EventHandler<ActionEvent> event) {
+		this.addBallotBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToChooseCitizenBallotButton(EventHandler<ActionEvent> event) {
+		this.citizenBallotBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToChooseCoronaBallotButton(EventHandler<ActionEvent> event) {
+		this.coronaBallotBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToChooseArmyBallotButton(EventHandler<ActionEvent> event) {
+		this.armyBallotBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToChooseArmyCoronaBallotButton(EventHandler<ActionEvent> event) {
+		this.armyCoronaBallotBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToBallotSubmitButton(EventHandler<ActionEvent> event) {
+		this.ballotSubmit.setOnAction(event);
+	}
+
+	public void EventHandlerToAddCitizenButton(EventHandler<ActionEvent> event) {
+		this.addCitizenBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToAddPartyButton(EventHandler<ActionEvent> event) {
+		this.addPartyBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToAddCandidateButton(EventHandler<ActionEvent> event) {
+		this.addCandidateBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToShowBallotsButton(EventHandler<ActionEvent> event) {
+		this.showBallotsBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToShowCitizensButton(EventHandler<ActionEvent> event) {
+		this.showCitizensBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToShowPartiesButton(EventHandler<ActionEvent> event) {
+		this.showPartiesBtn.setOnAction(event);
+	}
+
+//		public void EventHandlerToaddBallotButton(EventHandler<ActionEvent> event) {
+//			this.addBallotBtn.setOnAction(event);
+//		}
+//		
+//		public void EventHandlerToaddBallotButton(EventHandler<ActionEvent> event) {
+//			this.addBallotBtn.setOnAction(event);
+//		}
+
+	////
+	
+	/// get/set
+	
+	public void setScene() {
+		Stage stage = new Stage();
+		stage.setTitle("Elections");
+		stage.setScene(this.app);
+		stage.show();
+		Stage startStage = (Stage)this.startMenuSubmit.getScene().getWindow();
+		startStage.close();
+	}
+	
+	public void setPlatform(VBox root) {
+		this.platform.getChildren().clear();
+		this.platform.getChildren().add(root);
+	}
+	
+	public String getElectionsYear() {
+		return this.yearTextF.getText();
+	}
+	public String getElectionsMonth() {
+		return this.monthTextF.getText();
+	}
+	
+	public Address getBallotAddress() {
+		Address address = new Address(this.cityField.getText(),this.streetField.getText(), Integer.parseInt(this.houseNumField.getText()));
+		return address;
+	}
+
 }

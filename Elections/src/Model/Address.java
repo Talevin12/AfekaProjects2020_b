@@ -1,4 +1,4 @@
-package id314920505_id316013804;
+package Model;
 // basic Address class for the location of the ballots
 public class Address {
 	private String city;

@@ -1,5 +1,6 @@
 package id314920505_id316013804;
 import Controller.Controller;
+import Model.InvalidInputException;
 import Model.Model;
 import View.*;
 import javafx.application.Application;

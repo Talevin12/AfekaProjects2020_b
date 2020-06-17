@@ -1,10 +1,10 @@
-package id314920505_id316013804;
+package Model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import id314920505_id316013804.Party.eFaction;
+import Model.Party.eFaction;
 
 public class ProgramHandle {
 	static int choice = 0;

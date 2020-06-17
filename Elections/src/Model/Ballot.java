@@ -1,4 +1,4 @@
-package id314920505_id316013804;
+package Model;
 
 import java.util.ArrayList;
 import java.util.Scanner;
