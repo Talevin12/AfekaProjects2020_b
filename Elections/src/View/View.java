@@ -1,27 +1,33 @@
 package View;
 
 import java.time.LocalDate;
-
+import java.util.ArrayList;
 import Model.Address;
 import Model.Ballot;
+import Model.Citizen;
 import Model.Party;
+import Model.Votable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -84,11 +90,11 @@ public class View {
 	private TextField lNameField;
 	private TextField idField;
 	private ComboBox<Integer> birthYearComboBox;
-	private ChoiceBox<Ballot> ballotChoiceBox;
+	private ChoiceBox<Ballot<? extends Votable>> ballotChoiceBox;
 	private RadioButton isQuarintinedYESRadioBtn;
 	private RadioButton isQuarintinedNORadioBtn;
 	private DatePicker infectionDatePicker;
-	private Button checkCitizenTypeBtn = new Button("**Check**");
+	private Button checkCitizenTypeBtn = new Button("**please press before selecting ballot**");
 	private Button addCitizenSubmitBtn = new Button("Submit");
 
 	private Text partyNameTxt;
@@ -101,17 +107,35 @@ public class View {
 	private DatePicker establishDatePicker;
 	private Button partySubmitBtn = new Button("Submit");
 
+	private Button checkCandidateTypeBtn = new Button("**please press before selecting ballot**");
 	private Text partyTxt;
 	private ChoiceBox<Party> partyChoiceBox;
+	private Button addCandidateSubmitBtn = new Button("Submit");
+
 
 	private Text showBallotsTitle;
-	private TableView ballotTable;
+	private TableView<Ballot<? extends Votable>> ballotTable;
 
 	private Text showCitizensTitle;
-	private TableView citizenTable;
+	private TableView<Citizen> citizenTable;
 
 	private Text showPartyTitle;
-	private TableView partyTable;
+	private TableView<Party> partyTable;
+
+	private Label helloLbl = new Label();
+	private Button abstainBtn = new Button("Abstain");
+	private ChoiceBox<Party> partiesCB;
+	private Button voteSubmitBtn = new Button("Submit");
+
+
+	private Button coronaYesBtn = new Button("Yes");
+	private Button coronaNoBtn = new Button("No");
+
+	private Button armyYesBtn = new Button("Yes");
+	private Button armyNoBtn = new Button("No");
+
+	private Label resultsTitle;
+	private PieChart resultPieChart;
 
 	public View(Stage stage) {
 		this.root = new Group();
@@ -147,7 +171,7 @@ public class View {
 
 
 		this.startMenu = new Scene(vb,1000,600);		
-		
+
 		///////////////////////////////////////////////////////////
 
 		this.naviMenu = new VBox();
@@ -174,7 +198,6 @@ public class View {
 		this.resultsBtn = new Button("Elections Results");
 
 		this.exitBtn = new Button("EXIT");
-		this.exitBtn.setOnAction(e ->  stage.close());
 
 		this.naviMenu.getChildren().addAll(addBallotBtn, addCitizenBtn, addPartyBtn, addCandidateBtn, showBallotsBtn, showCitizensBtn, showPartiesBtn, startElectionsBtn, resultsBtn, exitBtn);
 		this.naviMenu.setMaxWidth(150);
@@ -184,23 +207,23 @@ public class View {
 
 		this.splitPane = new SplitPane(this.naviMenu, this.platform);
 		this.app = new Scene(splitPane, 1000, 600);
-		
+
 		stage.setTitle("Elections");
 		stage.setScene(this.startMenu);
 		stage.show();
 	}
 
 	public VBox chooseBallot() {
-//		this.citizenBallotBtn = new Button("Regular Ballot");
+		//		this.citizenBallotBtn = new Button("Regular Ballot");
 		this.citizenBallotBtn.setMinSize(200, 80);
 
-//		this.coronaBallotBtn = new Button("Corona Ballot");
+		//		this.coronaBallotBtn = new Button("Corona Ballot");
 		this.coronaBallotBtn.setMinSize(200, 80);
 
-//		this.armyBallotBtn = new Button("Army Ballot");
+		//		this.armyBallotBtn = new Button("Army Ballot");
 		this.armyBallotBtn.setMinSize(200, 80);
 
-//		this.armyCoronaBallotBtn = new Button("Army-Corona Ballot");
+		//		this.armyCoronaBallotBtn = new Button("Army-Corona Ballot");
 		this.armyCoronaBallotBtn.setMinSize(200, 80);
 
 		VBox buttons = new VBox(citizenBallotBtn, coronaBallotBtn, armyBallotBtn, armyCoronaBallotBtn);
@@ -295,7 +318,7 @@ public class View {
 		this.checkCitizenTypeBtn.setMinSize(150, 60);
 
 		this.ballotTxt = new Text("Choose Ballot: ");
-		this.ballotChoiceBox = new ChoiceBox<Ballot>();
+		this.ballotChoiceBox = new ChoiceBox<Ballot<? extends Votable>>();
 		HBox hBoxBallot = new HBox(ballotTxt, ballotChoiceBox);
 
 		this.addCitizenSubmitBtn.setMinSize(150, 60);
@@ -345,15 +368,21 @@ public class View {
 
 	public VBox addCandidate() {
 		VBox root = addCitizen();
+		root.getChildren().remove(this.checkCitizenTypeBtn);
+
+		root.getChildren().add(root.getChildren().size()-2, this.checkCandidateTypeBtn);
 
 		this.partyTxt = new Text("Party: ");
 		this.partyChoiceBox = new ChoiceBox<Party>();
 		HBox hBoxParty = new HBox(partyTxt, partyChoiceBox);
 
 		root.getChildren().add(root.getChildren().size()-1, hBoxParty);
+		root.getChildren().remove(this.addCitizenSubmitBtn);
+		root.getChildren().add(this.addCandidateSubmitBtn);
 		return root;
 	}
 
+	@SuppressWarnings("unchecked")
 	public VBox showBallots() {
 		VBox root = new VBox();
 
@@ -361,16 +390,26 @@ public class View {
 		this.showBallotsTitle.setStyle("-fx-font: 45 arial;");
 
 		this.ballotTable = new TableView<>();
-		TableColumn<String, Ballot> typeC = new TableColumn<>("Type");
+		ballotTable.setPlaceholder(new Label("No rows to display"));
+
+		TableColumn typeC = new TableColumn<>("Type");
 		typeC.setMinWidth(170);
 		typeC.setMaxWidth(170);
-		TableColumn<String, Ballot> idC = new TableColumn<>("Id");
+		typeC.setCellValueFactory(new PropertyValueFactory<Ballot<? extends Votable>, String>("type"));
+
+		TableColumn idC = new TableColumn<>("Id");
 		idC.setMinWidth(170);
 		idC.setMaxWidth(170);
-		TableColumn<String, Ballot> addressC = new TableColumn<>("Address");
-		TableColumn<String, Ballot> cityC = new TableColumn<>("City");
-		TableColumn<String, Ballot> streetC = new TableColumn<>("Street");
-		TableColumn<String, Ballot> houseNoC = new TableColumn<>("House Number");
+		idC.setCellValueFactory(new PropertyValueFactory<Ballot<? extends Votable>, Integer>("id"));
+
+		TableColumn addressC = new TableColumn<>("Address");
+		addressC.setCellValueFactory(new PropertyValueFactory<Ballot<? extends Votable>, Address>("address"));
+		TableColumn cityC = new TableColumn<>("City");
+		cityC.setCellValueFactory(new PropertyValueFactory<Address, String>("city"));
+		TableColumn streetC = new TableColumn<>("Street");
+		streetC.setCellValueFactory(new PropertyValueFactory<Address, String>("street"));
+		TableColumn houseNoC = new TableColumn<>("House Number");
+		houseNoC.setCellValueFactory(new PropertyValueFactory<Address, Integer>("houseNo"));
 		cityC.setMinWidth(170);
 		cityC.setMaxWidth(170);
 		streetC.setMinWidth(170);
@@ -391,27 +430,23 @@ public class View {
 		this.showCitizensTitle.setStyle("-fx-font: 45 arial;");
 
 		this.citizenTable = new TableView<>();
-		TableColumn<String, Ballot> nameC = new TableColumn<>("Name");
-		nameC.setMinWidth(140);
-		nameC.setMaxWidth(140);
-		TableColumn<String, Ballot> idC = new TableColumn<>("Id");
-		idC.setMinWidth(142);
-		idC.setMaxWidth(142);
-		TableColumn<String, Ballot> birthYearC = new TableColumn<>("Birth Year");
-		birthYearC.setMinWidth(141);
-		birthYearC.setMaxWidth(141);
-		TableColumn<String, Ballot> sickPeriodC = new TableColumn<>("Sick Peroid");
-		TableColumn<String, Ballot> yearsC = new TableColumn<>("Years");
-		TableColumn<String, Ballot> monthsC = new TableColumn<>("Months");
-		TableColumn<String, Ballot> daysC = new TableColumn<>("Days");
-		yearsC.setMinWidth(425/3);
-		yearsC.setMaxWidth(425/3);
-		monthsC.setMinWidth(425/3);
-		monthsC.setMaxWidth(425/3);
-		daysC.setMinWidth(425/3);
-		daysC.setMaxWidth(425/3);		
-		sickPeriodC.getColumns().addAll(yearsC, monthsC, daysC);
-		this.citizenTable.getColumns().addAll(nameC, idC, birthYearC, sickPeriodC);
+		TableColumn nameC = new TableColumn<>("Name");
+		nameC.setCellValueFactory(new PropertyValueFactory<Citizen, String>("Name"));
+		nameC.setMinWidth(425/2);
+		nameC.setMaxWidth(425/2);
+		TableColumn idC = new TableColumn<>("Id");
+		idC.setCellValueFactory(new PropertyValueFactory<Citizen, String>("id"));
+		idC.setMinWidth(425/2);
+		idC.setMaxWidth(425/2);
+		TableColumn birthYearC = new TableColumn<>("Birth Year");
+		birthYearC.setCellValueFactory(new PropertyValueFactory<Citizen, Integer>("birthYear"));
+		birthYearC.setMinWidth(425/2);
+		birthYearC.setMaxWidth(425/2);
+		TableColumn sickDateC = new TableColumn<>("Sickness Period (In days)");
+		sickDateC.setCellValueFactory(new PropertyValueFactory<Citizen, Integer>("sickDate"));
+		sickDateC.setMinWidth(425/2);
+		sickDateC.setMaxWidth(425/2);
+		this.citizenTable.getColumns().addAll(nameC, idC, birthYearC, sickDateC);
 
 		root.getChildren().addAll(showCitizensTitle, citizenTable);
 		return root;
@@ -424,13 +459,16 @@ public class View {
 		this.showPartyTitle.setStyle("-fx-font: 45 arial;");
 
 		this.partyTable = new TableView<>();
-		TableColumn<String, Ballot> nameC = new TableColumn<>("Name");
+		TableColumn<Party, String> nameC = new TableColumn<>("Name");
+		nameC.setCellValueFactory(new PropertyValueFactory<Party, String>("name"));
 		nameC.setMinWidth(850/4);
 		nameC.setMaxWidth(850/4);
-		TableColumn<String, Ballot> factionC = new TableColumn<>("Faction");
+		TableColumn<Party, String> factionC = new TableColumn<>("Faction");
+		factionC.setCellValueFactory(new PropertyValueFactory<Party, String>("faction"));
 		factionC.setMinWidth(850/4);
 		factionC.setMaxWidth(850/4);
-		TableColumn<String, Ballot> establishDateC = new TableColumn<>("Establish Date");
+		TableColumn<Party, LocalDate> establishDateC = new TableColumn<>("Establish Date");
+		establishDateC.setCellValueFactory(new PropertyValueFactory<Party, LocalDate>("establishDate"));
 		establishDateC.setMinWidth(850/2);
 		establishDateC.setMaxWidth(850/2);
 		this.partyTable.getColumns().addAll(nameC, factionC, establishDateC);
@@ -439,32 +477,99 @@ public class View {
 		return root;
 	}
 
+	public VBox vote() {
+		VBox voteScene = new VBox();
+
+		this.helloLbl = new Label();
+		this.helloLbl.setStyle("-fx-font: 60 arial;");
+
+		abstainBtn.setMinSize(150, 60);
+
+		this.partiesCB = new ChoiceBox<Party>();
+
+		voteSubmitBtn.setMinSize(150, 60);
+		voteScene.getChildren().addAll(helloLbl, abstainBtn, partiesCB, voteSubmitBtn);
+		voteScene.setSpacing(40);
+
+		voteScene.setAlignment(Pos.CENTER);
+		return voteScene;
+	}
+
+	public VBox coronaQs() {
+		VBox coronaQsScene = new VBox();
+		this.helloLbl.setStyle("-fx-font: 60 arial;");
+		Label questionLbl = new Label("Are you protected?");
+		questionLbl.setStyle("-fx-font: 60 arial;");
+		this.coronaYesBtn.setMinSize(150, 60);
+		this.coronaNoBtn.setMinSize(150, 60);
+
+		coronaQsScene.getChildren().addAll(helloLbl, questionLbl, coronaYesBtn, coronaNoBtn);
+		coronaQsScene.setAlignment(Pos.CENTER);
+		coronaQsScene.setSpacing(40);
+
+		return coronaQsScene;
+	}
+
+	public VBox ArmyQs() {
+		VBox armyQsScene = new VBox();
+
+		this.helloLbl = new Label();
+		this.helloLbl.setStyle("-fx-font: 60 arial;");
+		Label questionLbl = new Label("Are you carrying your weapon?");
+		questionLbl.setStyle("-fx-font: 60 arial;");
+		this.armyYesBtn.setMinSize(150, 60);
+		this.armyNoBtn.setMinSize(150, 60);
+
+		armyQsScene.getChildren().addAll(helloLbl, questionLbl, armyYesBtn, armyNoBtn);
+		armyQsScene.setAlignment(Pos.CENTER);
+		armyQsScene.setSpacing(40);
+
+		return armyQsScene;
+	}
+
+	public VBox electionsResults() {
+		VBox results = new VBox();
+
+		this.resultsTitle = new Label("Elctions Results");
+		this.resultsTitle.setStyle("-fx-font: 70 arial;");
+		
+		Label ballotsLeaders = new Label("Ballots Leaders:");
+		ballotsLeaders.setStyle("-fx-font: 40 arial;");
+		
+		this.resultPieChart = new PieChart();
+		
+		results.getChildren().addAll(resultsTitle, ballotsLeaders, resultPieChart);
+		results.setSpacing(15);
+
+		return results;
+	}
+
 	//// event handles
-	
+
 	public void EventHandlerToStartMenuSubmitButton(EventHandler<ActionEvent> event) {
 		this.startMenuSubmit.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToAddBallotButton(EventHandler<ActionEvent> event) {
 		this.addBallotBtn.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToChooseCitizenBallotButton(EventHandler<ActionEvent> event) {
 		this.citizenBallotBtn.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToChooseCoronaBallotButton(EventHandler<ActionEvent> event) {
 		this.coronaBallotBtn.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToChooseArmyBallotButton(EventHandler<ActionEvent> event) {
 		this.armyBallotBtn.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToChooseArmyCoronaBallotButton(EventHandler<ActionEvent> event) {
 		this.armyCoronaBallotBtn.setOnAction(event);
 	}
-	
+
 	public void EventHandlerToBallotSubmitButton(EventHandler<ActionEvent> event) {
 		this.ballotSubmit.setOnAction(event);
 	}
@@ -473,12 +578,32 @@ public class View {
 		this.addCitizenBtn.setOnAction(event);
 	}
 
+	public void EventHandlerToCitizenCheckButton(EventHandler<ActionEvent> event) {
+		this.checkCitizenTypeBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToCitizenSubmitButton(EventHandler<ActionEvent> event) {
+		this.addCitizenSubmitBtn.setOnAction(event);
+	}
+
 	public void EventHandlerToAddPartyButton(EventHandler<ActionEvent> event) {
 		this.addPartyBtn.setOnAction(event);
 	}
 
+	public void EventHandlerToPartySubmitButton(EventHandler<ActionEvent> event) {
+		this.partySubmitBtn.setOnAction(event);
+	}
+
 	public void EventHandlerToAddCandidateButton(EventHandler<ActionEvent> event) {
 		this.addCandidateBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToCandidateCheckButton(EventHandler<ActionEvent> event) {
+		this.checkCandidateTypeBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToCandidateSubmitButton(EventHandler<ActionEvent> event) {
+		this.addCandidateSubmitBtn.setOnAction(event);
 	}
 
 	public void EventHandlerToShowBallotsButton(EventHandler<ActionEvent> event) {
@@ -493,18 +618,44 @@ public class View {
 		this.showPartiesBtn.setOnAction(event);
 	}
 
-//		public void EventHandlerToaddBallotButton(EventHandler<ActionEvent> event) {
-//			this.addBallotBtn.setOnAction(event);
-//		}
-//		
-//		public void EventHandlerToaddBallotButton(EventHandler<ActionEvent> event) {
-//			this.addBallotBtn.setOnAction(event);
-//		}
+	public void EventHandlerToStartElectionsButton(EventHandler<ActionEvent> event) {
+		this.startElectionsBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToAbstainedButton(EventHandler<ActionEvent> event) {
+		this.abstainBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToVoteSubmitButton(EventHandler<ActionEvent> event) {
+		this.voteSubmitBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToCoronaYesButton(EventHandler<ActionEvent> event) {
+		this.coronaYesBtn.setOnAction(event);
+	}
+	public void EventHandlerToCoronaNoButton(EventHandler<ActionEvent> event) {
+		this.coronaNoBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToArmyYesButton(EventHandler<ActionEvent> event) {
+		this.armyYesBtn.setOnAction(event);
+	}
+	public void EventHandlerToArmyNoButton(EventHandler<ActionEvent> event) {
+		this.armyNoBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToElectionsResultsButton(EventHandler<ActionEvent> event) {
+		this.resultsBtn.setOnAction(event);
+	}
+
+	public void EventHandlerToExitButton(EventHandler<ActionEvent> event) {
+		this.exitBtn.setOnAction(event);
+	}
 
 	////
-	
+
 	/// get/set
-	
+
 	public void setScene() {
 		Stage stage = new Stage();
 		stage.setTitle("Elections");
@@ -513,22 +664,112 @@ public class View {
 		Stage startStage = (Stage)this.startMenuSubmit.getScene().getWindow();
 		startStage.close();
 	}
-	
+
 	public void setPlatform(VBox root) {
 		this.platform.getChildren().clear();
 		this.platform.getChildren().add(root);
 	}
-	
+
 	public String getElectionsYear() {
 		return this.yearTextF.getText();
 	}
 	public String getElectionsMonth() {
 		return this.monthTextF.getText();
 	}
+
+	public ArrayList<Node> getAddBallotFields() {
+		ArrayList<Node> page = new ArrayList<>();
+		page.add(this.cityField);
+		page.add(this.streetField);
+		page.add(this.houseNumField);
+		return page;
+	}
+
+	public ArrayList<Node> getAddCitizenFields() {
+		ArrayList<Node> page = new ArrayList<>();
+		page.add(this.fNameField);
+		page.add(this.lNameField);
+		page.add(this.idField);
+		page.add(this.birthYearComboBox);
+		page.add(this.isQuarintinedYESRadioBtn);
+		page.add(this.isQuarintinedNORadioBtn);
+		page.add(this.infectionDatePicker);
+		return page;
+	}
+
+	public ChoiceBox getBallotsChoiceBox() {
+		return this.ballotChoiceBox;
+	}
+
+	public ArrayList<Node> getAddPartyFields() {
+		ArrayList<Node> page = new ArrayList<>();
+		page.add(this.partyNameField);
+		page.add(this.centerRadioBtn);
+		page.add(this.leftRadioBtn);
+		page.add(this.rightRadioBtn);
+		page.add(this.establishDatePicker);
+		return page;
+	}
+
+	public ChoiceBox<Party> getPartiesChoiceBox() {
+		return this.partyChoiceBox;
+	}
+
+	public TableView<Ballot<? extends Votable>> getBallotsTable() {
+		return this.ballotTable;
+	}
+
+	public TableView<Citizen> getCitizensTable() {
+		return this.citizenTable;
+	}
+
+	public TableView<Party> getPartiesTable() {
+		return this.partyTable;
+	}
+
+	public void setHelloLbl(String name) {
+		this.helloLbl.setText(name);
+	}
+
+	public ChoiceBox<Party> getPartiesCB() {
+		return this.partiesCB;
+	}
+
+	public Button getExitBtn() {
+		return this.exitBtn;
+	}
 	
-	public Address getBallotAddress() {
-		Address address = new Address(this.cityField.getText(),this.streetField.getText(), Integer.parseInt(this.houseNumField.getText()));
-		return address;
+	public PieChart getResultPieChart() {
+		return this.resultPieChart;
+	}
+
+	////clear pages
+
+	public void clear(ArrayList<Node> page) {
+		for(int i = 0; i < page.size(); i++) {
+			Class clazz = page.get(i).getClass();
+			if(clazz == TextField.class) {
+				TextField b = (TextField)page.get(i);
+				b.setText("");
+			}
+			else if(clazz == RadioButton.class) {
+				RadioButton b = (RadioButton)page.get(i);
+				b.setSelected(false);
+			}
+			else if(clazz == ComboBox.class) {
+				ComboBox b = (ComboBox)page.get(i);
+				b.getSelectionModel().clearSelection();
+			}
+			else if(clazz == ChoiceBox.class) {
+				ChoiceBox b = (ChoiceBox)page.get(i);
+				b.getSelectionModel().clearSelection();
+			}
+			else if(clazz == DatePicker.class) {
+				DatePicker b = (DatePicker)page.get(i);
+				b.setValue(null);
+			}
+
+		}
 	}
 
 }

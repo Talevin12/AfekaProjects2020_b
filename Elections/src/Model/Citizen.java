@@ -1,16 +1,28 @@
 package Model;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
 import java.util.Scanner;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class Citizen implements Votable	{
 	protected String name;
 	protected String id;
 	protected int birthYear;
+	protected LocalDate sickDate;
 
 	public Citizen(String name, String id, int birthYear) {
 		this.name = name; 
 		this.id = id;
 		this.birthYear = birthYear;
+		this.sickDate = null;
 	}
 
 	public Citizen() throws InvalidInputException {
@@ -25,24 +37,23 @@ public class Citizen implements Votable	{
 		return str;
 	}
 
-	@Override
-	public int vote(Scanner scn, String parties, int numOfParties) {
-		boolean b = false;
-		int choice = 0;
-
-		while(!b) {
-			System.out.println("Choose party to vote for:");
-			System.out.println("0 - Do not want to vote");
-			System.out.println(parties);
-			choice = scn.nextInt();
-
-			if(choice >= 0 && choice <= numOfParties)
-				b = true;
-			else
-				System.out.println("Wrong Input! try again");
-		}
-		return choice;
-	}
+//	@Override
+//	public VBox vote() {
+//		VBox voteScene = new VBox();
+//		
+//		Label helloLbl = new Label("Hello, "+ this.name);
+//		helloLbl.setStyle("-fx-font: 60 arial;");
+//		
+//		ChoiceBox<String> partiesCB = new ChoiceBox<String>();
+//		
+//		Button submitBtn = new Button("Submit");
+//		submitBtn.setMinSize(150, 60);
+//		voteScene.getChildren().addAll(helloLbl, partiesCB, submitBtn);
+//		voteScene.setSpacing(20);
+//		
+//		
+//		return voteScene;
+//	}
 
 	public int getAge(int electionYear) {
 		return (electionYear-this.birthYear);
@@ -64,5 +75,20 @@ public class Citizen implements Votable	{
 	
 	public String getId() {
 		return this.id;
+	}
+	
+	public int getBirthYear() {
+		return this.birthYear;
+	}
+	
+	public LocalDate getSickDate1() {
+			return this.sickDate;
+	}
+	
+	public int getSickDate() {
+		if(this.sickDate == null)
+			return 0;
+		else
+			return (int)Duration.between(LocalDateTime.of(sickDate, LocalTime.of(0,0)), LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0))).toDays();
 	}
 }

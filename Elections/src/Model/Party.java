@@ -41,18 +41,26 @@ public class Party {
 	public String toString() {
 		StringBuffer str = new StringBuffer();
 
-		str.append("Party name: "+ this.name +", of faction: "+ this.faction.toString() +", was established at: "+ this.establishDate +"\n");
-		str.append("Our candidates: ");
+		str.append(this.name +" | "+ this.faction.toString() +" faction | was established at: "+ this.establishDate +"\n");
+//		str.append("Our candidates: ");
 
-		for(int i = 0; i < this.candidates.size(); i++) {
-			str.append(""+ this.candidates.get(i).toString() +"\n");
-		}
+//		for(int i = 0; i < this.candidates.size(); i++) {
+//			str.append(""+ this.candidates.get(i).toString() +"\n");
+//		}
 
 		return str.toString();
 	}
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public eFaction getFaction() {
+		return this.faction;
+	}
+	
+	public LocalDate getEstablishDate() {
+		return this.establishDate;
 	}
 
 	public String showAllCandidateInParty() {

@@ -1,13 +1,17 @@
 package Model;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import Model.Party.eFaction;
+import javafx.collections.ObservableList;
+
 public class Elections {
 	protected int month;
 	protected int year;
-//	protected Ballot[] ballots;
-	
+	//	protected Ballot[] ballots;
+
 	// All citizens 
 	protected VotableSet<Citizen> allVotables;
 
@@ -15,16 +19,16 @@ public class Elections {
 	// OR 
 	// All ballots types in same list
 	protected ArrayList<Ballot<? extends Votable>> ballots;	
-	
+
 	// OR
 	// Separate ballots for each type
-	
-//	protected ArrayList<Ballot<Citizen>> citizenBallots;	
-//	protected ArrayList<Ballot<SickCitizen>> sickCitizenBallots;	
-//	protected ArrayList<Ballot<Soldier>> soldierBallots;	
-//	protected ArrayList<Ballot<SickSoldier>> sickSoldierBallots;	
-	
-	
+
+	//	protected ArrayList<Ballot<Citizen>> citizenBallots;	
+	//	protected ArrayList<Ballot<SickCitizen>> sickCitizenBallots;	
+	//	protected ArrayList<Ballot<Soldier>> soldierBallots;	
+	//	protected ArrayList<Ballot<SickSoldier>> sickSoldierBallots;	
+
+
 	protected ArrayList<Party> parties;
 	protected int ballotIdCounter = 1;
 	protected ArrayList<Integer> results;
@@ -40,9 +44,9 @@ public class Elections {
 		this.results = new ArrayList<>();
 		this.results.add(0);
 	}
-	
+
 	private <C extends Votable> Ballot<C> findBallotById(int id, Class<C> clazz) {
-		
+
 		List<Ballot<C>> cBallots = this.<C>getBallotsByType(clazz);		
 		for(Ballot<C> ballot : cBallots) {
 			if(ballot.getId() == id)
@@ -57,16 +61,16 @@ public class Elections {
 		this.ballots.add(ballot);
 		this.ballotIdCounter++;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <C extends Votable>  List<Ballot<C>> getBallotsByType(Class<C> clazz) {
 		List<Ballot<C>> ballotsOfTypeCResults = new ArrayList<Ballot<C>>();
-		
+
 		for(Ballot<? extends Votable> ballot : this.ballots) {
-			if (ballot.getType() == clazz)
+			if (ballot.getType1() == clazz)
 				ballotsOfTypeCResults.add((Ballot<C>)ballot);
 		}
-		
+
 		return ballotsOfTypeCResults;
 	}
 
@@ -93,54 +97,52 @@ public class Elections {
 		this.results.add(0);
 		increaseBallotsResultList();
 	}
-	
+
 	private void increaseBallotsResultList() {
 		for(Ballot<? extends Votable> b : this.ballots) {
 			b.ballotResults.add(0);
 		}	
 	}
 	public boolean addCandidateToParty(Politician candidate, int ballotId) throws InvalidInputException {
-		if(isCandidateExists(candidate))
-			return false;
-		
-		boolean b = false;
-		int i = 0;
-		while(!b && i <= this.parties.size()) {
-			if(this.parties.get(i) == candidate.getParty())
-				b = true;
-			i++;
-		}
+		//		if(isCandidateExists(candidate))
+		//			return false;
+
+		boolean b;
+		//		int i = 0;
+		//		while(!b && i <= this.parties.size()) {
+		//			if(this.parties.get(i) == candidate.getParty())
+		//				b = true;
+		//			i++;
+		//		}
+		//		if(b) {
+		b = this.<Citizen>addCitizen(candidate, ballotId);
 		if(b) {
-			this.<Citizen>addCitizen(candidate, ballotId);
 			candidate.getParty().addCandidate(candidate);
 		}
 		return b;
 	}
 
-	public String showAllBallots() {
-		StringBuffer str = new StringBuffer();
-
-		for(Ballot<? extends Votable> ballot: this.ballots) {
-			str.append(ballot.toString()+ "\n");
-		}
-		return str.toString();
+	public ArrayList<Ballot<? extends Votable>> getBallots() {
+		return this.ballots;
 	}
-	
-	public String showFilteredBallots(Object type) {
-		StringBuffer str = new StringBuffer();
-		
+
+	@SuppressWarnings("unchecked")
+	public <C extends Votable> ArrayList<Ballot<C>> getFilteredBallots(Object type) {
+		//		StringBuffer str = new StringBuffer();
+		ArrayList<Ballot<C>> ballots = new ArrayList<Ballot<C>>();
+
 		for(Ballot<? extends Votable> ballot : this.ballots) {
-			if(ballot.getType() == type)
-				str.append(ballot.toString() +"\n");
+			if(ballot.getType1() == type)
+				ballots.add((Ballot<C>) ballot);
 		}
 
-		return str.toString();
+		return ballots;
 	}
-	
+
 	public boolean checkBallotInput(int ballotId, Object type) {
 		if(ballotId > this.ballots.size() || ballotId <= 0)
 			return false;
-		if(this.ballots.get(ballotId-1).getType() == type)
+		if(this.ballots.get(ballotId-1).getType1() == type)
 			return true;
 		return false;
 	}
@@ -151,36 +153,36 @@ public class Elections {
 		for(int i = 0; i < this.ballots.size(); i++) {
 			str.append("In ballot #"+ (i+1) +": \n");
 			str.append(this.ballots.get(i).showAllVoters());
-			
+
 		}
 
 		return str.toString();
 	}
 
-	public void startElections() {
-		Scanner scn = new Scanner(System.in);
-		System.out.println("Let the elactions Begin!");
-		
-		for(int i = 0; i < this.parties.size(); i++) {
-			this.parties.get(i).PrimeriesVote(scn);
-			this.parties.get(i).sortByPrimeriesVotes();
-		}
-		
-		for(int i = 0; i < this.ballotIdCounter-1; i++) {
-//			this.ballots.get(i).setBallotesResults(this.parties.size()+1);
-			this.ballots.get(i).letsVote(scn, showAllParties());
-		}
-
-		this.hasStarted = true;
-	}
+//	public void startElections() {
+//		Scanner scn = new Scanner(System.in);
+//		System.out.println("Let the elactions Begin!");
+//
+//		for(int i = 0; i < this.parties.size(); i++) {
+//			this.parties.get(i).PrimeriesVote(scn);
+//			this.parties.get(i).sortByPrimeriesVotes();
+//		}
+//
+//		for(int i = 0; i < this.ballotIdCounter-1; i++) {
+//			//			this.ballots.get(i).setBallotesResults(this.parties.size()+1);
+//			this.ballots.get(i).letsVote(scn, showAllParties());
+//		}
+//
+//		this.hasStarted = true;
+//	}
 
 	/// Private ////
-	
+
 	/// Public ///
 
 	/// Variables ///
-	
-	
+
+
 	public String showAllParties() {
 		StringBuffer str = new StringBuffer();
 		for(int i = 0; i < this.parties.size(); i++) {
@@ -191,61 +193,41 @@ public class Elections {
 		return str.toString();
 	}
 
-	private void countVotes() {
+	public void countVotes() {
 		for(int i = 0; i < this.ballotIdCounter-1; i++) {
 			for(int j = 0; j < this.parties.size()+1; j++) {
-				this.results.set(j,  this.results.get(j) + (int)this.ballots.get(i).ballotResults.get(j));
+				this.results.set(j,  this.results.get(j) + this.ballots.get(i).ballotResults.get(j));
 			}
 		}
 	}
 
-	public String showElectionsResults() {
+//	public ArrayList<Integer> getElectionsResults() { 
+//		StringBuffer str = new StringBuffer("\nHere are the "+ this.month +"/"+ this.year +" elections results: \n");
+//
+//		for(int i = 0; i < this.ballotIdCounter-1; i++) {
+//			str.append(this.ballots.get(i).showBallotResult(this.parties) +"\n");
+//		}
+//
+//		str.append("Results summary: \n");
+//		countVotes();
+//		str.append("Abstained from voting: "+ this.results.get(0) +" citizens\n");
+//
+//		for(int i = 1; i <= this.parties.size(); i++) {
+//			str.append(this.parties.get(i-1).getName() +"- "+ this.results.get(i) +" votes. \n");
+//		}
+//
+//		str.append("The leading party for votes in the elections are: "+ findLeadingPartyName() +"\n");
+//
+//		str.append("And now forming a coalition.... wait... Something went wrong /: .... See you again in 3 months! \n");
+//
+//		return str.toString();
+//	}
 
-		StringBuffer str = new StringBuffer("\nHere are the "+ this.month +"/"+ this.year +" elections results: \n");
-
-		for(int i = 0; i < this.ballotIdCounter-1; i++) {
-			str.append(this.ballots.get(i).showBallotResult(this.parties) +"\n");
-		}
-
-		str.append("Results summary: \n");
-		countVotes();
-		str.append("Abstained from voting: "+ this.results.get(0) +" citizens\n");
-
-		for(int i = 1; i <= this.parties.size(); i++) {
-			str.append(this.parties.get(i-1).getName() +"- "+ this.results.get(i) +" votes. \n");
-		}
-		
-		str.append("The leading party for votes in the elections are: "+ findLeadingPartyName() +"\n");
-
-		str.append("And now forming a coalition.... wait... Something went wrong /: .... See you again in 3 months! \n");
-
-		return str.toString();
-	}
-	private String findLeadingPartyName() {
-		String str = this.parties.get(0).getName();
-		int max = 1;
-	    for (int i = 2; i < this.results.size(); i++) {
-	        if (this.results.get(i) > this.results.get(max)) {
-	            max = i;
-	            str = this.parties.get(i-1).getName(); 
-	        }
-	        else if(this.results.get(i) == this.results.get(max)) {
-	        	str += ", "+ this.parties.get(i-1).getName();
-	        }
-	    }
-	    return str;
-	}
-
-	//to avoid creating the same candidate
-	private boolean isCandidateExists(Politician candidate) {
-		for(int i = 0; i < this.parties.size(); i++) {
-			if(this.parties.get(i).isExists(candidate))
-				return true;
-		}
-		return false;
-	}
-	
 	public ArrayList<Party> getParties() {
 		return this.parties;
+	}
+
+	public List<Citizen> getCitizens(){
+		return this.allVotables.getVoters();
 	}
 }

@@ -2,9 +2,11 @@ package Model;
 
 import java.util.Scanner;
 
+import javafx.scene.layout.VBox;
+
 public interface Votable {
 	
-	public int vote(Scanner scn, String parties, int numOfParties);	
+//	public VBox vote();	
 	
 	String getId();
 

@@ -30,4 +30,16 @@ public class Address {
 	public String toString() {
 		return this.street +" "+ this.houseNo +", "+ this.city;
 	}
+	
+	public String getCity() {
+		return this.city;
+	}
+	
+	public String getStreet() {
+		return this.street;
+	}
+	
+	public int getHouseNo() {
+		return this.houseNo;
+	}
 }
