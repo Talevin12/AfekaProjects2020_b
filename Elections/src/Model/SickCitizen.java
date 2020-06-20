@@ -52,13 +52,4 @@ public class SickCitizen extends Citizen implements Sickable {
 	public int sicknessPeriod() {
 		return this.sickDate.until(LocalDate.now()).getDays();
 	}
-	
-	@Override
-	public String toString() {
-		String str ="";
-		Period period = super.sickDate.until(LocalDate.now());
-		str += "Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Sick for: "+ period.getYears() +" years, "+ period.getMonths() +" months and "+ period.getDays() +" days to this date ("+ LocalDate.now().toString() +")";
-
-		return str;
-	}
 }

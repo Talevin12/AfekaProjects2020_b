@@ -97,16 +97,23 @@ public class Ballot<T extends Votable> {
 	}
 	
 	public String findLeadingPartyName(ArrayList<Party> parties) {
-		String str = parties.get(0).getName();
+		for(Party party : parties) {
+			party.sortByPrimeriesVotes();
+		}
+		
+		String str = parties.get(0).getName() +"("+ parties.get(0).getCandidatesInParty().get(0).getName() +")";
 		int max = 1;
 		for (int i = 2; i < this.ballotResults.size(); i++) {
 			if (this.ballotResults.get(i) > this.ballotResults.get(max)) {
 				max = i;
-				str = parties.get(i-1).getName(); 
+				str = parties.get(i-1).getName() +"("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")"; 
 			}
 			else if(this.ballotResults.get(i) == this.ballotResults.get(max)) {
-				str += ", "+ parties.get(i-1).getName();
+				str += ", "+ parties.get(i-1).getName() +"("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")";
 			}
+			
+			if(ballotResults.get(max) == 0)
+				str = "";
 		}
 		return str;
 	}

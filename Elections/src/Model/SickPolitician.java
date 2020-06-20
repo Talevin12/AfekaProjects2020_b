@@ -38,14 +38,4 @@ public class SickPolitician extends Politician implements Sickable{
 //		
 //		return super.vote(scan, parties, numOfParties);
 //	}
-	
-	@Override
-	public String toString() {
-		String str ="";
-		Period period = super.sickDate.until(LocalDate.now());
-		str += "Name: "+ this.name +" | Id: "+ this.id +" | Birth Year: "+ this.birthYear +" | Sick for: "+ period.getYears() +" years, "+ period.getMonths() +" months and "+ period.getDays() +" days to this date ("+ LocalDate.now().toString() +")";
-
-		return str;
-	}
-
 }

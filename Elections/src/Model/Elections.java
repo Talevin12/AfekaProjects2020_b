@@ -1,11 +1,6 @@
 package Model;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import Model.Party.eFaction;
-import javafx.collections.ObservableList;
 
 public class Elections {
 	protected int month;
@@ -183,20 +178,21 @@ public class Elections {
 	/// Variables ///
 
 
-	public String showAllParties() {
-		StringBuffer str = new StringBuffer();
-		for(int i = 0; i < this.parties.size(); i++) {
-			str.append((i+1) +" - "+ this.parties.get(i).getName() +", faction of "+this.parties.get(i).faction+ ", was astablish at "+this.parties.get(i).establishDate+"\n");
-			str.append(parties.get(i).showAllCandidateInParty());
-		}
-
-		return str.toString();
-	}
+//	public String showAllParties() {
+//		StringBuffer str = new StringBuffer();
+//		for(int i = 0; i < this.parties.size(); i++) {
+//			str.append((i+1) +" - "+ this.parties.get(i).getName() +", faction of "+this.parties.get(i).faction+ ", was astablish at "+this.parties.get(i).establishDate+"\n");
+//			str.append(parties.get(i).showAllCandidateInParty());
+//		}
+//
+//		return str.toString();
+//	}
 
 	public void countVotes() {
-		for(int i = 0; i < this.ballotIdCounter-1; i++) {
+		for(int i = 0; i < this.ballots.size(); i++) {
+			ArrayList<Integer> ballotResult = this.ballots.get(i).getBallotResultsList();
 			for(int j = 0; j < this.parties.size()+1; j++) {
-				this.results.set(j,  this.results.get(j) + this.ballots.get(i).ballotResults.get(j));
+				this.results.set(j,  this.results.get(j) + ballotResult.get(j));
 			}
 		}
 	}

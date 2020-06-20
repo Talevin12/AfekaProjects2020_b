@@ -54,17 +54,24 @@ public class Model {
 		return elections.addCitizen(citizen, ballotId);
 	}
 
-	public Class checkCitizenType(int birthYear, boolean isQuarintined) {
+	public Class checkCitizenType(int birthYear, boolean isQuarintined, boolean isPolitician) {
 		Class type = Citizen.class;
 
 		int age = elections.year - birthYear;
 		if(age < 18) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
-			alert.setContentText("***This age is not eligble to vote");
+			alert.setContentText("*** This age is not eligble to vote");
 			alert.show();
+			return null;
 		}
 		boolean isSoldier = age <= 21;
-		
+
+		if(isPolitician && isSoldier) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+			alert.setContentText("*** This age is not eligble to be a politician");
+			alert.show();
+			return null;
+		}
 
 		if(isQuarintined && isSoldier)
 			type = SickSoldier.class;
@@ -93,35 +100,35 @@ public class Model {
 	public <C extends Votable> ArrayList<Ballot<C>> getFilteredBallots(Object type) {
 		return elections.<C>getFilteredBallots(type);
 	}
-	
+
 	public void addParty(String partyName, eFaction faction, LocalDate establishDate) {
 		elections.addParty(new Party(partyName, faction, establishDate));
 	}
-	
+
 	public <C extends Votable> void addCandidate(Politician citizen, int ballotId) throws InvalidInputException {
 		elections.addCandidateToParty(citizen, ballotId);
 	}
-	
+
 	public ArrayList<Party> getParties() {
 		return elections.getParties();
 	}
-	
+
 	public ArrayList<Ballot<? extends Votable>> getBallots() {
 		return this.elections.getBallots();
 	}
-	
+
 	public ArrayList<Citizen> getCitizens() {
 		return (ArrayList<Citizen>)this.elections.getCitizens();
 	}
-	
+
 	public boolean isElectionsStarted() {
 		return this.elections.hasStarted;
 	}
-	
+
 	public void setElectionsStarted() {
 		this.elections.hasStarted = true;
 	}
-	
+
 	public ArrayList<Integer> getResultsList() {
 		elections.countVotes();
 		return elections.results;

@@ -63,13 +63,8 @@ public class Party {
 		return this.establishDate;
 	}
 
-	public String showAllCandidateInParty() {
-		
-		StringBuffer str = new StringBuffer("Our Candidates: \n");
-		for (int i = 0; i < candidates.size() ; i++) {
-			str.append("\t"+ (i+1) +"- "+ this.candidates.get(i).getName() +"\n");
-		}
-		return str.toString();
+	public ArrayList<Politician> getCandidatesInParty() {
+		return this.candidates;
 	}
 	//to check if the candidate exists
 	public boolean isExists(Politician candidate) {
@@ -80,11 +75,11 @@ public class Party {
 		return false;
 	}
 
-	public void PrimeriesVote(Scanner scn) {
-		for(int i = 0; i < this.candidates.size(); i++) {
-			this.candidates.get(this.candidates.get(i).voteForPrimeries(scn, showAllCandidateInParty(), this.candidates.size())-1).voted();
-		}
-	}
+//	public void PrimeriesVote(Scanner scn) {
+//		for(int i = 0; i < this.candidates.size(); i++) {
+//			this.candidates.get(this.candidates.get(i).voteForPrimeries(scn, showAllCandidateInParty(), this.candidates.size())-1).voted();
+//		}
+//	}
 
 	public void sortByPrimeriesVotes() {
 		Collections.sort(this.candidates);

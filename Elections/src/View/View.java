@@ -6,6 +6,7 @@ import Model.Address;
 import Model.Ballot;
 import Model.Citizen;
 import Model.Party;
+import Model.Politician;
 import Model.Votable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -123,6 +124,10 @@ public class View {
 	private TableView<Party> partyTable;
 
 	private Label helloLbl = new Label();
+	
+	private ChoiceBox<Politician> poliChoiceBox;
+	private Button primeriesSubmitBtn = new Button("Submit"); 
+	
 	private Button abstainBtn = new Button("Abstain");
 	private ChoiceBox<Party> partiesCB;
 	private Button voteSubmitBtn = new Button("Submit");
@@ -477,6 +482,22 @@ public class View {
 		return root;
 	}
 
+	public VBox primeriesVote() {
+		VBox primeriesScene = new VBox();
+		
+		this.helloLbl = new Label();
+		this.helloLbl.setStyle("-fx-font: 60 arial;");
+
+		this.poliChoiceBox = new ChoiceBox<Politician>();
+		primeriesSubmitBtn.setMinSize(150, 60);
+		
+		primeriesScene.getChildren().addAll(helloLbl, poliChoiceBox, primeriesSubmitBtn);
+		primeriesScene.setSpacing(40);
+		primeriesScene.setAlignment(Pos.CENTER);
+		
+		return primeriesScene;
+	}
+	
 	public VBox vote() {
 		VBox voteScene = new VBox();
 
@@ -533,7 +554,7 @@ public class View {
 		this.resultsTitle = new Label("Elctions Results");
 		this.resultsTitle.setStyle("-fx-font: 70 arial;");
 		
-		Label ballotsLeaders = new Label("Ballots Leaders:");
+		Label ballotsLeaders = new Label("Ballots Leaders(Party Leader):");
 		ballotsLeaders.setStyle("-fx-font: 40 arial;");
 		
 		this.resultPieChart = new PieChart();
@@ -620,6 +641,10 @@ public class View {
 
 	public void EventHandlerToStartElectionsButton(EventHandler<ActionEvent> event) {
 		this.startElectionsBtn.setOnAction(event);
+	}
+	
+	public void EventHandlerToPrimeriesSubmitButton(EventHandler<ActionEvent> event) {
+		this.primeriesSubmitBtn.setOnAction(event);
 	}
 
 	public void EventHandlerToAbstainedButton(EventHandler<ActionEvent> event) {
@@ -729,6 +754,10 @@ public class View {
 
 	public void setHelloLbl(String name) {
 		this.helloLbl.setText(name);
+	}
+	
+	public ChoiceBox<Politician> getPoliCB() {
+		return this.poliChoiceBox;
 	}
 
 	public ChoiceBox<Party> getPartiesCB() {

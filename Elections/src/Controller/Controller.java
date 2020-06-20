@@ -1,9 +1,6 @@
 package Controller;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-
 import Model.Address;
 import Model.Ballot;
 import Model.Citizen;
@@ -33,9 +30,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 
 public class Controller {
 	private Model model;
@@ -154,11 +152,34 @@ public class Controller {
 					alert.show();
 				}
 				else {
-					checkSickCitizen();
+					Citizen currentCitizen = model.getBallots().get(ballotIndex).getVoters().get(citizenIndex);
+					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+						primeriesVote();
+					else
+						checkSickCitizen();
 				}
 			}
 		};
 		view.EventHandlerToStartElectionsButton(EventHandlerToStartElectionsButton);
+		
+		EventHandler<ActionEvent> EventHandlerToPrimeriesSubmitButton = new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				int choice = view.getPoliCB().getSelectionModel().getSelectedIndex();
+
+				if(choice >= 0) {
+					view.getPoliCB().getValue().voted();
+					
+					checkSickCitizen();
+				}
+				else {
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setContentText("* No candidate was selected");
+					alert.show();
+				}
+			}
+		};
+		view.EventHandlerToPrimeriesSubmitButton(EventHandlerToPrimeriesSubmitButton);
 
 		EventHandler<ActionEvent> EventHandlerToCoronaYesButton = new EventHandler<ActionEvent>() {
 			@Override
@@ -171,8 +192,17 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToCoronaNoButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Ballot<? extends Votable> currentBallot = model.getBallots().get(ballotIndex);
+				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
+
 				forwardVoter();
-				checkSickCitizen();
+				if(!endOfVoting) {
+					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
+					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+						primeriesVote();
+					else
+						checkSickCitizen();
+				}
 			}
 		};
 		view.EventHandlerToCoronaNoButton(EventHandlerToCoronaNoButton);
@@ -188,8 +218,16 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToArmyNoButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Ballot<? extends Votable> currentBallot = model.getBallots().get(ballotIndex);
+				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
 				forwardVoter();
-				checkSickCitizen();
+				if(!endOfVoting) {
+					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
+					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+						primeriesVote();
+					else
+						checkSickCitizen();
+				}
 			}
 		};
 		view.EventHandlerToArmyNoButton(EventHandlerToArmyNoButton);
@@ -201,8 +239,14 @@ public class Controller {
 				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
 
 				forwardVoter();
-				if(!endOfVoting)
-					checkSickCitizen();
+				if(!endOfVoting) {
+					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
+					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+						primeriesVote();
+					else
+						checkSickCitizen();
+				}
+					
 			}
 		};
 		view.EventHandlerToAbstainedButton(EventHandlerToAbstainedButton);
@@ -214,10 +258,17 @@ public class Controller {
 
 				if(choice >= 0) {
 					Ballot<? extends Votable> currentBallot = model.getBallots().get(ballotIndex);
-					currentBallot.getBallotResultsList().set(choice+1, currentBallot.getBallotResultsList().get(0) + 1);
+					currentBallot.getBallotResultsList().set(choice+1, currentBallot.getBallotResultsList().get(choice+1) + 1);
 
 					forwardVoter();
-					checkSickCitizen();
+					if(!endOfVoting) {
+						Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
+						if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+							primeriesVote();
+						else
+							checkSickCitizen();
+					}
+						
 				}
 				else {
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -304,7 +355,7 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToCitizenCheckButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				checkCitizenType();
+				checkCitizenType(false);
 			}
 		};
 		view.EventHandlerToCitizenCheckButton(EventHandlerToCitizenCheckButton);
@@ -371,7 +422,7 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToCandidateCheckButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				checkCitizenType();
+				checkCitizenType(true);
 			}
 		};
 		view.EventHandlerToCandidateCheckButton(EventHandlerToCandidateCheckButton);
@@ -389,6 +440,8 @@ public class Controller {
 				ChoiceBox<Party> partiesCB = view.getPartiesChoiceBox();
 				if(partiesCB.getValue() == null)
 					alert.setContentText(alert.getContentText() + "* No party was selected");
+
+
 
 				if(alert.getContentText().isEmpty()) {
 					Politician politician;
@@ -426,7 +479,7 @@ public class Controller {
 
 
 
-	private void checkCitizenType() {
+	private void checkCitizenType(boolean isPolitician) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
 		ArrayList<Node> page = view.getAddCitizenFields();
 		TextField fNameTF = (TextField)page.get(0);
@@ -466,35 +519,54 @@ public class Controller {
 		if(alert.getContentText().isEmpty()) {
 			ChoiceBox<Ballot> ballotsCB = view.getBallotsChoiceBox();
 			ballotsCB.getItems().clear();
-			Class type = model.checkCitizenType(birthYearCB.getValue(), isQuarintined);
+			Class type = model.checkCitizenType(birthYearCB.getValue(), isQuarintined, isPolitician);
 
-			Citizen citizen = null;
-			String name = fNameTF.getText() +" "+ lNameTF.getText();
-			String id = idTF.getText();
-			int birthYear = birthYearCB.getValue();
+			if(type != null) {
+				Citizen citizen = null;
+				String name = fNameTF.getText() +" "+ lNameTF.getText();
+				String id = idTF.getText();
+				int birthYear = birthYearCB.getValue();
 
-			if(type == SickSoldier.class)
-				citizen = new SickSoldier(name, id, birthYear, infectionDateDP.getValue());
-			else if(type == Soldier.class)
-				citizen = new Soldier(name, id, birthYear);
-			else if(type == SickCitizen.class)
-				citizen = new SickCitizen(name, id, birthYear, infectionDateDP.getValue());
+				if(type == SickSoldier.class)
+					citizen = new SickSoldier(name, id, birthYear, infectionDateDP.getValue());
+				else if(type == Soldier.class)
+					citizen = new Soldier(name, id, birthYear);
+				else if(type == SickCitizen.class)
+					citizen = new SickCitizen(name, id, birthYear, infectionDateDP.getValue());
+				else
+					citizen = new Citizen(name, id, birthYear);
+
+				model.citizen = citizen;
+
+				if(type == Citizen.class)
+					ballotsCB.getItems().addAll(model.<Citizen>getFilteredBallots(type));
+				else if(type == SickCitizen.class)
+					ballotsCB.getItems().addAll(model.<SickCitizen>getFilteredBallots(type));
+				else if(type == Soldier.class)
+					ballotsCB.getItems().addAll(model.<Soldier>getFilteredBallots(type));
+				else if(type == SickSoldier.class)
+					ballotsCB.getItems().addAll(model.<SickSoldier>getFilteredBallots(type));
+			}
 			else
-				citizen = new Citizen(name, id, birthYear);
-
-			model.citizen = citizen;
-
-			if(type == Citizen.class)
-				ballotsCB.getItems().addAll(model.<Citizen>getFilteredBallots(type));
-			else if(type == SickCitizen.class)
-				ballotsCB.getItems().addAll(model.<SickCitizen>getFilteredBallots(type));
-			else if(type == Soldier.class)
-				ballotsCB.getItems().addAll(model.<Soldier>getFilteredBallots(type));
-			else if(type == SickSoldier.class)
-				ballotsCB.getItems().addAll(model.<SickSoldier>getFilteredBallots(type));
+				alert.show();
 		}
-		else
-			alert.show();
+	}
+	
+	public void primeriesVote() {
+		Politician currentCitizen = (Politician)model.getBallots().get(ballotIndex).getVoters().get(citizenIndex);
+		Party poliParty = currentCitizen.getParty();
+		
+		VBox temp = view.primeriesVote();
+		view.getPoliCB().getItems().addAll(poliParty.getCandidatesInParty());
+		
+		view.setHelloLbl("Hello, "+ currentCitizen.getName());
+		
+		Label primeriesLbl = new Label("Select a candidate for party leader:");
+		primeriesLbl.setStyle("-fx-font: 40 arial;");
+		
+		temp.getChildren().add(1, primeriesLbl);
+		
+		view.setPlatform(temp);
 	}
 
 	public void checkSickCitizen() {
@@ -546,7 +618,6 @@ public class Controller {
 			}
 			else {
 				showResults();
-				//				view.setPlatform(view.electionsResults());
 				endOfVoting = true;
 				model.setElectionsStarted();
 			}
@@ -573,10 +644,26 @@ public class Controller {
 			pieChartData.add(new PieChart.Data(parties.get(i-1).getName(), resultsList.get(i)));
 		}
 
+
 		PieChart resultPC = view.getResultPieChart();
 		resultPC.setData(pieChartData);
-		resultPC.setTitle("Elections result summarry");
+		resultPC.setTitle("Elections result summarry:");
 		resultPC.setLegendSide(Side.LEFT);
+
+		final Label caption = new Label("");
+		caption.setTextFill(Color.DARKORANGE);
+		caption.setStyle("-fx-font: 24 arial;");
+
+		for (final PieChart.Data data : resultPC.getData()) {
+			data.getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
+					new EventHandler<MouseEvent>() {
+				@Override public void handle(MouseEvent e) {
+					caption.setTranslateX(e.getSceneX());
+					caption.setTranslateY(e.getSceneY());
+					caption.setText(String.valueOf(data.getPieValue()) + "%");
+				}
+			});
+		}
 
 		view.setPlatform(temp);
 	}
