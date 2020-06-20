@@ -547,9 +547,9 @@ public class Controller {
 				else if(type == SickSoldier.class)
 					ballotsCB.getItems().addAll(model.<SickSoldier>getFilteredBallots(type));
 			}
-			else
-				alert.show();
 		}
+		else
+			alert.show();
 	}
 	
 	public void primeriesVote() {
