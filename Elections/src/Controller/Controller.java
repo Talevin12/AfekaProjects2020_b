@@ -69,7 +69,13 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToAddBallotButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				view.setPlatform(view.chooseBallot());
+				if(!model.isElectionsStarted())
+					view.setPlatform(view.chooseBallot());
+				else {
+					Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+					alert.setContentText("*** Elections already started! ***");
+					alert.show();
+				}
 			}
 		};
 		view.EventHandlerToAddBallotButton(EventHandlerToAddBallotButton);
@@ -77,7 +83,13 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToAddCitizenButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				view.setPlatform(view.addCitizen());
+				if(!model.isElectionsStarted())
+					view.setPlatform(view.addCitizen());
+				else {
+					Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+					alert.setContentText("*** Elections already started! ***");
+					alert.show();
+				}
 			}
 		};
 		view.EventHandlerToAddCitizenButton(EventHandlerToAddCitizenButton);
@@ -85,7 +97,13 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToAddPartyButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				view.setPlatform(view.addParty());
+				if(!model.isElectionsStarted())
+					view.setPlatform(view.addParty());
+				else {
+					Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+					alert.setContentText("*** Elections already started! ***");
+					alert.show();
+				}
 			}
 		};
 		view.EventHandlerToAddPartyButton(EventHandlerToAddPartyButton);
@@ -93,9 +111,18 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToAddCandidateButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				VBox temp = view.addCandidate();
-				view.getPartiesChoiceBox().getItems().addAll(model.getParties());
-				view.setPlatform(temp);
+				
+				if(!model.isElectionsStarted()) {
+					VBox temp = view.addCandidate();
+					view.getPartiesChoiceBox().getItems().addAll(model.getParties());
+					view.setPlatform(temp);
+				}
+				else {
+					Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+					alert.setContentText("*** Elections already started! ***");
+					alert.show();
+				}
+
 			}
 		};
 		view.EventHandlerToAddCandidateButton(EventHandlerToAddCandidateButton);

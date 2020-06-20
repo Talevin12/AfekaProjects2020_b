@@ -1,5 +1,6 @@
 package Model;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Elections {
@@ -53,6 +54,7 @@ public class Elections {
 
 	public void addBallot(Ballot<? extends Votable> ballot) {
 		ballot.setId(this.ballotIdCounter);
+		ballot.ballotResults = new ArrayList<>(Collections.nCopies(this.results.size(), 0));
 		this.ballots.add(ballot);
 		this.ballotIdCounter++;
 	}
