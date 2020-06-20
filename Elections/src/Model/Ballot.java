@@ -81,15 +81,28 @@ public class Ballot<T extends Votable> {
 			party.sortByPrimeriesVotes();
 		}
 		
-		String str = parties.get(0).getName() +"("+ parties.get(0).getCandidatesInParty().get(0).getName() +")";
+		String str = parties.get(0).getName();
+		if(parties.get(0).getCandidatesInParty().size()>0)
+			str += "("+ parties.get(0).getCandidatesInParty().get(0).getName() +")";
+		else
+			str += "(Empty)";
+		
 		int max = 1;
 		for (int i = 2; i < this.ballotResults.size(); i++) {
 			if (this.ballotResults.get(i) > this.ballotResults.get(max)) {
 				max = i;
-				str = parties.get(i-1).getName() +"("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")"; 
+					str = parties.get(i-1).getName();
+					if(parties.get(i-1).getCandidatesInParty().size()>0)
+						str += "("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")";
+					else
+						str += "(Empty)";
 			}
 			else if(this.ballotResults.get(i) == this.ballotResults.get(max)) {
-				str += ", "+ parties.get(i-1).getName() +"("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")";
+				str += ", "+ parties.get(i-1).getName();
+				if(parties.get(i-1).getCandidatesInParty().size()>0)
+					str += "("+ parties.get(i-1).getCandidatesInParty().get(0).getName() +")";
+				else
+					str += "(Empty)";
 			}
 			
 			if(ballotResults.get(max) == 0)
