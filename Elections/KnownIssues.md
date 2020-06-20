@@ -1,3 +1,3 @@
 # known issues
 
-> We couldn't find any issues we couldn't overcome and solve.  
+> Incorrect input type (string in a integer needed input) will cause exception but won't collapse the program entirely.
