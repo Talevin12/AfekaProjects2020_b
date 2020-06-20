@@ -3,7 +3,6 @@ package Model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Scanner;
 
 public class Party {
 	public static enum eFaction {Left, Center, Right};
@@ -42,11 +41,6 @@ public class Party {
 		StringBuffer str = new StringBuffer();
 
 		str.append(this.name +" | "+ this.faction.toString() +" faction | was established at: "+ this.establishDate +"\n");
-//		str.append("Our candidates: ");
-
-//		for(int i = 0; i < this.candidates.size(); i++) {
-//			str.append(""+ this.candidates.get(i).toString() +"\n");
-//		}
 
 		return str.toString();
 	}
@@ -74,12 +68,6 @@ public class Party {
 		}
 		return false;
 	}
-
-//	public void PrimeriesVote(Scanner scn) {
-//		for(int i = 0; i < this.candidates.size(); i++) {
-//			this.candidates.get(this.candidates.get(i).voteForPrimeries(scn, showAllCandidateInParty(), this.candidates.size())-1).voted();
-//		}
-//	}
 
 	public void sortByPrimeriesVotes() {
 		Collections.sort(this.candidates);

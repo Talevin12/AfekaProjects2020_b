@@ -219,16 +219,12 @@ public class View {
 	}
 
 	public VBox chooseBallot() {
-		//		this.citizenBallotBtn = new Button("Regular Ballot");
 		this.citizenBallotBtn.setMinSize(200, 80);
 
-		//		this.coronaBallotBtn = new Button("Corona Ballot");
 		this.coronaBallotBtn.setMinSize(200, 80);
-
-		//		this.armyBallotBtn = new Button("Army Ballot");
+		
 		this.armyBallotBtn.setMinSize(200, 80);
 
-		//		this.armyCoronaBallotBtn = new Button("Army-Corona Ballot");
 		this.armyCoronaBallotBtn.setMinSize(200, 80);
 
 		VBox buttons = new VBox(citizenBallotBtn, coronaBallotBtn, armyBallotBtn, armyCoronaBallotBtn);

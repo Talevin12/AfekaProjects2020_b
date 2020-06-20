@@ -399,7 +399,7 @@ public class Controller {
 					view.clear(page);
 
 				} catch (InvalidInputException e) {
-					Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setContentText(e.getMsg());
 					alert.show();
 				}
@@ -410,7 +410,7 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToPartySubmitButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+				Alert alert = new Alert(Alert.AlertType.ERROR);
 
 				ArrayList<Node> page = view.getAddPartyFields();
 
@@ -507,7 +507,7 @@ public class Controller {
 
 
 	private void checkCitizenType(boolean isPolitician) {
-		Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+		Alert alert = new Alert(Alert.AlertType.ERROR);
 		ArrayList<Node> page = view.getAddCitizenFields();
 		TextField fNameTF = (TextField)page.get(0);
 		if(fNameTF.getText().isEmpty())
@@ -676,21 +676,6 @@ public class Controller {
 		resultPC.setData(pieChartData);
 		resultPC.setTitle("Elections result summarry:");
 		resultPC.setLegendSide(Side.LEFT);
-
-		final Label caption = new Label("");
-		caption.setTextFill(Color.DARKORANGE);
-		caption.setStyle("-fx-font: 24 arial;");
-
-		for (final PieChart.Data data : resultPC.getData()) {
-			data.getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
-					new EventHandler<MouseEvent>() {
-				@Override public void handle(MouseEvent e) {
-					caption.setTranslateX(e.getSceneX());
-					caption.setTranslateY(e.getSceneY());
-					caption.setText(String.valueOf(data.getPieValue()) + "%");
-				}
-			});
-		}
 
 		view.setPlatform(temp);
 	}

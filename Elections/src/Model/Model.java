@@ -1,7 +1,6 @@
 package Model;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 import Model.Party.eFaction;
 import javafx.scene.control.Alert;

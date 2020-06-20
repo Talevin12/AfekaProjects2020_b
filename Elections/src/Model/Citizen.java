@@ -4,13 +4,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
-import java.util.Scanner;
-
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 
 public class Citizen implements Votable	{
 	protected String name;
@@ -36,24 +29,6 @@ public class Citizen implements Votable	{
 
 		return str;
 	}
-
-//	@Override
-//	public VBox vote() {
-//		VBox voteScene = new VBox();
-//		
-//		Label helloLbl = new Label("Hello, "+ this.name);
-//		helloLbl.setStyle("-fx-font: 60 arial;");
-//		
-//		ChoiceBox<String> partiesCB = new ChoiceBox<String>();
-//		
-//		Button submitBtn = new Button("Submit");
-//		submitBtn.setMinSize(150, 60);
-//		voteScene.getChildren().addAll(helloLbl, partiesCB, submitBtn);
-//		voteScene.setSpacing(20);
-//		
-//		
-//		return voteScene;
-//	}
 
 	public int getAge(int electionYear) {
 		return (electionYear-this.birthYear);
