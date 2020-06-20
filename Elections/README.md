@@ -1,8 +1,8 @@
 
 # Elections
 
-## Assignment 2
-Elections management system
+## Assignment 3
+Elections management system (Javafx GUI)
 
 ### Lecturer 
 > Victor Taubkin 
