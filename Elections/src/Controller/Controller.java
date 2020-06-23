@@ -111,7 +111,7 @@ public class Controller {
 		EventHandler<ActionEvent> EventHandlerToAddCandidateButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				
+
 				if(!model.isElectionsStarted()) {
 					VBox temp = view.addCandidate();
 					view.getPartiesChoiceBox().getItems().addAll(model.getParties());
@@ -179,16 +179,29 @@ public class Controller {
 					alert.show();
 				}
 				else {
-					Citizen currentCitizen = model.getBallots().get(ballotIndex).getVoters().get(citizenIndex);
-					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
-						primeriesVote();
-					else
-						checkSickCitizen();
+					ArrayList<Ballot<? extends Votable>> ballots = model.getBallots();
+
+					if(ballots.size() != 0 && model.getParties().size() != 0) {
+						if(ballots.get(0).getVoters().size() != 0) {
+							Citizen currentCitizen = ballots.get(0).getVoters().get(0);
+							if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+								primeriesVote();
+							else
+								checkSickCitizen();
+						}
+						else
+							forwardVoter();
+					}
+					else {
+						Alert alert = new Alert(Alert.AlertType.ERROR);//ERROR);//INFORMATION);
+						alert.setContentText("** There are no ballots/parties");
+						alert.show();
+					}
 				}
 			}
 		};
 		view.EventHandlerToStartElectionsButton(EventHandlerToStartElectionsButton);
-		
+
 		EventHandler<ActionEvent> EventHandlerToPrimeriesSubmitButton = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -196,7 +209,7 @@ public class Controller {
 
 				if(choice >= 0) {
 					view.getPoliCB().getValue().voted();
-					
+
 					checkSickCitizen();
 				}
 				else {
@@ -223,13 +236,6 @@ public class Controller {
 				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
 
 				forwardVoter();
-				if(!endOfVoting) {
-					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
-					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
-						primeriesVote();
-					else
-						checkSickCitizen();
-				}
 			}
 		};
 		view.EventHandlerToCoronaNoButton(EventHandlerToCoronaNoButton);
@@ -247,14 +253,8 @@ public class Controller {
 			public void handle(ActionEvent event) {
 				Ballot<? extends Votable> currentBallot = model.getBallots().get(ballotIndex);
 				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
+
 				forwardVoter();
-				if(!endOfVoting) {
-					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
-					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
-						primeriesVote();
-					else
-						checkSickCitizen();
-				}
 			}
 		};
 		view.EventHandlerToArmyNoButton(EventHandlerToArmyNoButton);
@@ -266,14 +266,6 @@ public class Controller {
 				currentBallot.getBallotResultsList().set(0, currentBallot.getBallotResultsList().get(0) + 1);
 
 				forwardVoter();
-				if(!endOfVoting) {
-					Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
-					if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
-						primeriesVote();
-					else
-						checkSickCitizen();
-				}
-					
 			}
 		};
 		view.EventHandlerToAbstainedButton(EventHandlerToAbstainedButton);
@@ -288,14 +280,6 @@ public class Controller {
 					currentBallot.getBallotResultsList().set(choice+1, currentBallot.getBallotResultsList().get(choice+1) + 1);
 
 					forwardVoter();
-					if(!endOfVoting) {
-						Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
-						if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
-							primeriesVote();
-						else
-							checkSickCitizen();
-					}
-						
 				}
 				else {
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -578,21 +562,21 @@ public class Controller {
 		else
 			alert.show();
 	}
-	
+
 	public void primeriesVote() {
 		Politician currentCitizen = (Politician)model.getBallots().get(ballotIndex).getVoters().get(citizenIndex);
 		Party poliParty = currentCitizen.getParty();
-		
+
 		VBox temp = view.primeriesVote();
 		view.getPoliCB().getItems().addAll(poliParty.getCandidatesInParty());
-		
+
 		view.setHelloLbl("Hello, "+ currentCitizen.getName());
-		
+
 		Label primeriesLbl = new Label("Select a candidate for party leader:");
 		primeriesLbl.setStyle("-fx-font: 40 arial;");
-		
+
 		temp.getChildren().add(1, primeriesLbl);
-		
+
 		view.setPlatform(temp);
 	}
 
@@ -634,7 +618,7 @@ public class Controller {
 
 	}
 
-	public void forwardVoter() {
+	public void forwardVoterHelper() {
 		ArrayList<Ballot<? extends Votable>> ballots = model.getBallots();
 		if((citizenIndex) < ballots.get(ballotIndex).getVoters().size()-1)
 			citizenIndex++;
@@ -648,6 +632,23 @@ public class Controller {
 				endOfVoting = true;
 				model.setElectionsStarted();
 			}
+		}
+	}
+
+	public void forwardVoter() {
+		forwardVoterHelper(); 
+
+		if(!endOfVoting) {
+			Ballot<? extends Votable> currentBallot = model.getBallots().get(ballotIndex);
+			if(currentBallot.getVoters().size() != 0) {
+				Citizen currentCitizen = currentBallot.getVoters().get(citizenIndex);
+				if(currentCitizen.getClass() == Politician.class || currentCitizen.getClass() == SickPolitician.class)
+					primeriesVote();
+				else
+					checkSickCitizen();
+			}
+			else
+				forwardVoter();
 		}
 	}
 
